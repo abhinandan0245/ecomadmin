@@ -15,6 +15,8 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { MultiValue } from 'react-select';
 import { toast } from 'react-toastify';
 import { getAllCategoryAPIThunk, getSizesByCategoryThunk } from '../../store/thunks/categoryThunks';
+import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css'; // Don't forget the styles
 
 interface Option {
     value: string;
@@ -44,6 +46,8 @@ const AddNew = () => {
         title: '',
         hsnCode: '',
         description: '',
+        ingredients: '',
+        additionalInfo: '',
         originalPrice: '',
         discountPercentage: '0',
         discountAmount: '0',
@@ -53,6 +57,22 @@ const AddNew = () => {
         sizeVariants: [] as SizeVariant[],
         productStatus: 'active',
     });
+      
+        // Add this type for the ReactQuill change handler
+type ReactQuillChangeHandler = (value: string) => void;
+
+// Inside your component, add these handlers:
+const handleDescriptionChange: ReactQuillChangeHandler = (value) => {
+    setForm(prev => ({ ...prev, description: value }));
+};
+
+const handleIngredientsChange: ReactQuillChangeHandler = (value) => {
+    setForm(prev => ({ ...prev, ingredients: value }));
+};
+
+const handleAdditionalInfoChange: ReactQuillChangeHandler = (value) => {
+    setForm(prev => ({ ...prev, additionalInfo: value }));
+};
 
     // Track which discount field is active based on values
     const isPercentageActive = parseFloat(form.discountPercentage) > 0;
@@ -275,6 +295,8 @@ useEffect(() => {
             title: selectedProduct.title || '',
             hsnCode: selectedProduct.hsnCode || '',
             description: selectedProduct.description || '',
+            ingredients: selectedProduct.ingredients || '',
+            additionalInfo: selectedProduct.additionalInfo || '',
             originalPrice: selectedProduct.originalPrice ? String(selectedProduct.originalPrice) : '',
             discountPercentage: selectedProduct.discountPercentage ? String(selectedProduct.discountPercentage) : '0',
             discountAmount: selectedProduct.discountAmount ? String(selectedProduct.discountAmount) : '0',
@@ -438,6 +460,8 @@ const handleSubmit = async () => {
     formData.append('categoryId', form.categoryId);
     formData.append('brand', form.brand);
     formData.append('description', form.description || '');
+    formData.append('ingredients', form.ingredients || '');
+    formData.append('additionalInfo', form.additionalInfo || '');
     formData.append('hsnCode', form.hsnCode || '');
     formData.append('stock', form.stock || '0');
     formData.append('productStatus', form.productStatus === 'active' ? 'true' : 'false');
@@ -483,6 +507,8 @@ const handleSubmit = async () => {
         form.discountPercentage, 
         form.discountAmount
     );
+
+
 
     return (
         <div className="flex flex-col gap-2.5">
@@ -537,20 +563,9 @@ const handleSubmit = async () => {
                                     placeholder="Enter HSN Code" 
                                 />
                             </div>
-                            <div className="mt-4 flex items-center">
-                                <label htmlFor="Description" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                                    Description
-                                </label>
-                                <textarea
-                                    value={form.description}
-                                    onChange={handleInputChange}
-                                    id="Description"
-                                    rows={6}
-                                    name="description"
-                                    className="form-textarea flex-1"
-                                    placeholder="Enter Description"
-                                />
-                            </div>
+                           
+
+                            
                             
                             <div className="flex items-center mt-10">
                                 <label htmlFor="Stock" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
@@ -760,6 +775,42 @@ const handleSubmit = async () => {
 </div>
                         </div>
                     </div>
+<div className='flex flex-col lg:flex-col gap-6 mt-6'>
+    <div className="mt-4 flex-1">
+        <label htmlFor="Description" className="block mb-2">
+            Description
+        </label>
+        <ReactQuill
+            value={form.description}
+            onChange={handleDescriptionChange}
+            className="bg-white mb-4 h-64"
+            theme="snow"
+        />
+    </div>
+    <div className="mt-4 flex-1">
+        <label htmlFor="Ingredients" className="block mb-2">
+            Ingredients
+        </label>
+        <ReactQuill
+            value={form.ingredients}
+            onChange={handleIngredientsChange}
+            className="bg-white mb-4 h-64"
+            theme="snow"
+        />
+    </div>
+    <div className="mt-4 flex-1">
+        <label htmlFor="AdditionalInfo" className="block mb-2">
+            Additional Info
+        </label>
+        <ReactQuill
+            value={form.additionalInfo}
+            onChange={handleAdditionalInfoChange}
+            className="bg-white mb-4 h-64"
+            theme="snow"
+        />
+    </div>
+</div>
+
                     {/* Image Upload Section */}
                     <div className="p-6 bg-white rounded shadow-lg mt-6">
                         <h2 className="text-xl font-semibold mb-4">Product Images</h2>
