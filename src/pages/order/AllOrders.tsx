@@ -1,134 +1,128 @@
-import { Link, NavLink } from 'react-router-dom';
+import { useState, useEffect, useMemo } from 'react';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useState, useEffect } from 'react';
 import sortBy from 'lodash/sortBy';
 import { useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/slices/themeConfigSlice';
-import IconTrashLines from '../../components/Icon/IconTrashLines';
-import IconPlus from '../../components/Icon/IconPlus';
-import ExportOrdersButton from '../../component/order/allorders/ExportOrdersButton';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { cancelOrderThunk, getAllOrdersThunk } from '../../store/thunks/orderThunks';
-import Flatpickr from 'react-flatpickr';
-import 'flatpickr/dist/flatpickr.css';
+import { useAppDispatch } from '../../store/hooks';
+import { useGetAllOrdersQuery, useCancelOrderMutation } from '../../../features/order/orderApi';
 import ConfirmDialog from '../../component/ConfirmDailog';
+
 import { toast } from 'react-toastify';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
+import Flatpickr from 'react-flatpickr';
+import 'flatpickr/dist/flatpickr.css';
+import { NavLink } from 'react-router-dom';
+import ExportOrdersButton from '../../component/order/allorders/ExportOrdersButton';
+import { useCreateShipmentFromOrderMutation } from '../../../features/shipment/shipmentApi';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
 
+const PAGE_SIZES = [10, 20, 30, 50, 100];
+
 const AllOrders = () => {
     const dispatch = useAppDispatch();
-    // If your state is state.orders.orders, use: const orders = useAppSelector((state) => state.orders.orders);
-    const { orders, loading } = useAppSelector((state) => state.orders);
 
     useEffect(() => {
         dispatch(setPageTitle('Order List'));
-        dispatch(
-            getAllOrdersThunk({
-                status: '',
-            })
-        );
     }, [dispatch]);
 
+    // Fetch orders
+    const { data, isLoading } = useGetAllOrdersQuery();
+    const orders = data?.data || [];
+
+    const [cancelOrder, { isLoading: isCancelling }] = useCancelOrderMutation();
+
+    // inside component
+    const [createShipmentFromOrder, { isLoading: isCreatingShipment }] = useCreateShipmentFromOrderMutation();
+    const [creatingForId, setCreatingForId] = useState<number | null>(null);
+
+    // UI state
     const [page, setPage] = useState(1);
-    const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [initialRecords, setInitialRecords] = useState<any[]>([]);
-    const [records, setRecords] = useState<any[]>([]);
-    const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
-    const [search, setSearch] = useState('');
     const [sortStatus, setSortStatus] = useState<DataTableSortStatus>({
-        columnAccessor: 'invoice',
+        columnAccessor: 'orderId',
         direction: 'asc',
     });
+    const [search, setSearch] = useState('');
+    const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
     const [showCancelConfirm, setShowCancelConfirm] = useState(false);
-    const [isCancelling, setIsCancelling] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState<any | null>(null);
 
-    // Debug: Show raw orders
-    // Remove this after debugging
-    // console.log('orders:', orders);
-
-    useEffect(() => {
-        setPage(1);
-    }, [pageSize]);
-
-    useEffect(() => {
-        const from = (page - 1) * pageSize;
-        const to = from + pageSize;
-        setRecords([...initialRecords.slice(from, to)]);
-    }, [page, pageSize, initialRecords]);
-
-    useEffect(() => {
-        if (!orders || orders.length === 0) {
-            setInitialRecords([]);
-            return;
-        }
-
-        const filtered = orders.filter((item: any) => {
-            const name = item.name?.toLowerCase() || '';
-            const date = item.dateOfOrder?.toString().toLowerCase() || '';
-            const total = item.total?.toString().toLowerCase() || '';
-            const amount = item.amount?.toString().toLowerCase() || '';
-            const paymentStatus = item.paymentStatus?.tooltip?.toLowerCase() || item.paymentStatus?.toLowerCase() || '';
-            const orderStatus = item.orderStatus?.tooltip?.toLowerCase() || item.orderStatus?.toLowerCase() || '';
-
-            return (
-                name.includes(search.toLowerCase()) ||
-                date.includes(search.toLowerCase()) ||
-                total.includes(search.toLowerCase()) ||
-                amount.includes(search.toLowerCase()) ||
-                paymentStatus.includes(search.toLowerCase()) ||
-                orderStatus.includes(search.toLowerCase())
-            );
-        });
-
-        setInitialRecords(filtered);
-    }, [search, orders]);
-
-    useEffect(() => {
-        const data2 = sortBy(initialRecords, sortStatus.columnAccessor);
-        setRecords(sortStatus.direction === 'desc' ? data2.reverse() : data2);
-        setPage(1);
-    }, [sortStatus, initialRecords]);
-
-    // date range
     const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl';
     const [date3, setDate3] = useState<any>('');
 
-    if (loading) return <div className="text-center py-10">Loading...</div>;
+    // 🔑 Derived records (no extra useEffects)
+    const filteredOrders = useMemo(() => {
+        let filtered = orders;
 
-    // cance'l order api call
+        // Simple search filter
+        if (search) {
+            const s = search.toLowerCase();
+            filtered = filtered.filter(
+                (o: any) => o.orderId?.toString().includes(s) || o.Customer?.name?.toLowerCase().includes(s) || o.paymentMethod?.toLowerCase().includes(s) || o.orderStatus?.toLowerCase().includes(s)
+            );
+        }
 
+        // TODO: Apply status filter & date range filter if you hook those selects
+        return filtered;
+    }, [orders, search]);
+
+    const sortedOrders = useMemo(() => {
+        const sorted = sortBy(filteredOrders, sortStatus.columnAccessor);
+        return sortStatus.direction === 'desc' ? sorted.reverse() : sorted;
+    }, [filteredOrders, sortStatus]);
+
+    const pagedOrders = useMemo(() => {
+        const from = (page - 1) * pageSize;
+        return sortedOrders.slice(from, from + pageSize);
+    }, [sortedOrders, page, pageSize]);
+
+    // Cancel order handler
     const handleCancelOrder = async () => {
         if (!selectedOrder?.id) return;
 
-        setIsCancelling(true);
         try {
-            const result = await dispatch(cancelOrderThunk(selectedOrder.id)).unwrap();
+            const result = await cancelOrder(selectedOrder.id).unwrap();
             toast.success(result?.message || 'Order cancelled successfully!');
             setShowCancelConfirm(false);
-            setSelectedOrder(null); // ✅ Reset
-            dispatch(getAllOrdersThunk({ status: '' }));
+            setSelectedOrder(null);
         } catch (error) {
             console.error('Failed to cancel order:', error);
             toast.error('Failed to cancel order');
-        } finally {
-            setIsCancelling(false);
         }
     };
 
-    // time zone
-    dayjs.extend(utc);
-    dayjs.extend(timezone);
+    if (isLoading) return <div className="text-center py-10">Loading...</div>;
+
+   // shipment api call
+ const handleCreateShipment = async (order: any) => {
+  try {
+    setCreatingForId(order.id);
+    const res = await createShipmentFromOrder({ orderId: order.id }).unwrap();
+
+    const waybill = res?.data?.waybill;
+    const shipment = res?.data?.shipment;
+
+    toast.success(
+      res?.message || `Shipment created (WB: ${waybill || "-"})`
+    );
+
+    console.log("Shipment object:", shipment); // optional debug
+  } catch (e: any) {
+    toast.error(e?.data?.message || "Failed to create shipment");
+  } finally {
+    setCreatingForId(null);
+  }
+};
+
 
     return (
         <div className="flex flex-col gap-4">
+            {/* Top filters */}
             <div className="panel">
                 <p className="text-2xl font-bold w-1/3 mb-8">All Orders</p>
                 <div className="flex justify-between gap-5 items-center">
@@ -136,12 +130,18 @@ const AllOrders = () => {
                         <label htmlFor="Filter" className="w-1/6">
                             Order Status :
                         </label>
-                        <select name="payment" id="_payment" className="form-select flex-1">
-                            <option value="payment"></option>
+                        <select
+                            name="payment"
+                            id="_payment"
+                            className="form-select flex-1"
+                            // TODO: hook this up to filteredOrders
+                            onChange={() => {}}
+                        >
+                            <option value=""></option>
                             <option value="Pending">Pending</option>
                             <option value="Shipped">Shipped</option>
-                            <option value="Deliverd">Deliverd</option>
-                            <option value="Cancel">Canceled</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
                         </select>
                     </div>
                     <div className="flex justify-center items-center gap-4 flex-1">
@@ -161,6 +161,8 @@ const AllOrders = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Orders table */}
             <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">
                 <div className="invoice-table">
                     <div className="mb-4.5 px-5 flex md:items-center md:flex-row flex-col gap-5">
@@ -174,44 +176,21 @@ const AllOrders = () => {
                     <div className="datatables pagination-padding">
                         <DataTable
                             className="whitespace-nowrap table-hover invoice-table"
-                            records={records}
+                            records={pagedOrders}
                             columns={[
-                                {
-                                    accessor: 'orderId',
-                                    title: 'Order Id',
-                                    sortable: true,
-                                },
+                                { accessor: 'orderId', title: 'Order Id', sortable: true },
                                 {
                                     accessor: 'customerName',
                                     title: 'Customer',
                                     sortable: true,
-
-                                    render: ({ customerName, id }) => (
-                                        <div className="flex items-center font-semibold">
-                                            <div>{customerName}</div>
-                                        </div>
-                                    ),
+                                    render: ({ Customer }) => <div>{Customer?.name}</div>,
                                 },
-                                // {
-                                //     accessor: 'customerEmail',
-                                //     title: 'Email',
-                                //     sortable: true,
-                                // },
-                                // {
-                                //     accessor: 'customerMobile',
-                                //     title: 'Mobile',
-                                //     sortable: true,
-                                // },
                                 {
                                     accessor: 'orderDate',
                                     title: 'Date and Time',
                                     sortable: true,
-                                    render: ({ orderDate }) => {
-                                        const formatted = dayjs(orderDate).tz('Asia/Kolkata').format('DD/MM/YYYY hh:mm A');
-                                        return <div>{formatted}</div>;
-                                    },
+                                    render: ({ orderDate }) => dayjs(orderDate).tz('Asia/Kolkata').format('DD/MM/YYYY hh:mm A'),
                                 },
-
                                 {
                                     accessor: 'paymentMethod',
                                     title: 'Payment Method',
@@ -221,116 +200,94 @@ const AllOrders = () => {
                                     accessor: 'amount',
                                     title: 'Order Amount',
                                     sortable: true,
-                                    // titleClassName: 'text-center',
-                                    render: ({ amount }) => <div className=" font-semibold">{`₹ ${amount}`}</div>,
+                                    render: ({ amount }) => <div className="font-semibold">₹ {amount}</div>,
                                 },
-                                // {
-                                //     accessor: 'paymentStatus',
-                                //     title: 'Payment Status',
-                                //     sortable: true,
-                                //     render: ({ paymentStatus }) => {
-                                //         const status = paymentStatus?.tooltip ? paymentStatus : { tooltip: paymentStatus, color: 'success' };
-                                //         return <span className={`badge badge-outline-${status.color}`}>{status.tooltip}</span>;
-                                //     },
-                                // },
                                 {
                                     accessor: 'orderStatus',
                                     title: 'Order Status',
                                     sortable: true,
                                     render: ({ orderStatus }) => {
-    const statusMap: Record<string, string> = {
-        Pending: 'warning',
-        Processing: 'info',
-        Shipped: 'primary',
-        Delivered: 'success',
-        Cancelled: 'danger',
-        Failed: 'danger',
-    };
-
-    const label = typeof orderStatus === 'object' ? orderStatus.tooltip : orderStatus;
-    const color = statusMap[label] || 'secondary'; // fallback color
-
-    return <span className={`badge badge-outline-${color}`}>{label}</span>;
-},
+                                        const statusMap: Record<string, string> = {
+                                            Pending: 'warning',
+                                            Processing: 'info',
+                                            Shipped: 'primary',
+                                            Delivered: 'success',
+                                            Cancelled: 'danger',
+                                            Failed: 'danger',
+                                        };
+                                        const label = typeof orderStatus === 'object' ? orderStatus.tooltip : orderStatus;
+                                        const color = statusMap[label] || 'secondary';
+                                        return <span className={`badge badge-outline-${color}`}>{label}</span>;
+                                    },
                                 },
-                                //                                 {
-                                //   accessor: 'products',
-                                //   title: 'Products',
-                                //   sortable: false,
-                                //   render: ({ products }) => {
-                                //     let productList = [];
-
-                                //     try {
-                                //       const parsedProducts = typeof products === 'string' ? JSON.parse(products) : products;
-                                //       productList = parsedProducts.map((p: any) => `${p.title} (x${p.qty})`);
-                                //     } catch {
-                                //       productList = ['Invalid format'];
-                                //     }
-
-                                //     return <div className="whitespace-nowrap max-w-[250px]">{productList.join(', ')}</div>;
-                                //   },
-                                // },
-
-                                //                                {
-                                //   accessor: 'address',
-                                //   title: 'Address',
-                                //   sortable: false,
-                                //   render: ({ address }) => {
-                                //     let formatted = '';
-
-                                //     try {
-                                //       const addr = typeof address === 'string' ? JSON.parse(address) : address;
-                                //       formatted = `${addr.line1}, ${addr.city}, ${addr.state} - ${addr.pincode}`;
-                                //     } catch {
-                                //       formatted = 'Invalid address';
-                                //     }
-
-                                //     return <div className="whitespace-nowrap max-w-[250px]">{formatted}</div>;
-                                //   },
-                                // },
-
                                 {
-                                    accessor: 'action',
-                                    title: 'Actions',
-                                    sortable: false,
-                                    textAlignment: 'center',
-                                    render: ({ id }) => (
-                                        <div className="flex gap-4 items-center w-max mx-auto">
-                                            <NavLink to={`/order/order-details/${id}`} className="flex hover:text-primary">
-                                                <button className="btn btn-sm btn-primary">View</button>
-                                            </NavLink>
-                                            {/* <button
-                                                className="btn btn-sm btn-danger"
-                                                onClick={() => {
-                                                    const fullOrder = records.find((order) => order.id === id);
-                                                    setSelectedOrder(fullOrder);
-                                                    setShowCancelConfirm(true);
-                                                }}
-                                            >
-                                                Cancel Order
-                                            </button> */}
-                                        </div>
-                                    ),
-                                },
+  accessor: "action",
+  title: "Actions",
+  sortable: false,
+  render: (order) => {
+    const hasShipment =
+      Array.isArray(order.shipments) && order.shipments.length > 0;
+
+    // ✅ define canCreate here
+    const canCreate =
+      !hasShipment &&
+      order.orderStatus !== "Cancelled" &&
+      ["Pending", "Processing"].includes(order.orderStatus);
+
+    return (
+      <div className="flex gap-2 items-center">
+        {/* View order */}
+        <NavLink to={`/order/order-details/${order.id}`}>
+          <button className="btn btn-sm btn-primary">View</button>
+        </NavLink>
+
+        {/* Shipment */}
+            {canCreate && (
+              <button
+                className="btn btn-sm btn-secondary"
+                onClick={() => handleCreateShipment(order)}
+                disabled={isCreatingShipment && creatingForId === order.id}
+              >
+                {isCreatingShipment && creatingForId === order.id
+                  ? 'Creating...'
+                  : 'Create Shipment'}
+              </button>
+            )}
+
+        {/* Cancel order */}
+        <button
+          className="btn btn-sm btn-danger"
+          onClick={() => {
+            const fullOrder = orders.find((o) => o.id === order.id);
+            setSelectedOrder(fullOrder);
+            setShowCancelConfirm(true);
+          }}
+        >
+          Cancel Order
+        </button>
+      </div>
+    );
+  },
+}
+
                             ]}
-                            highlightOnHover
-                            totalRecords={initialRecords.length}
+                            totalRecords={filteredOrders.length}
                             recordsPerPage={pageSize}
                             page={page}
-                            onPageChange={(p) => setPage(p)}
+                            onPageChange={setPage}
                             recordsPerPageOptions={PAGE_SIZES}
                             onRecordsPerPageChange={setPageSize}
                             sortStatus={sortStatus}
                             onSortStatusChange={setSortStatus}
                             selectedRecords={selectedRecords}
                             onSelectedRecordsChange={setSelectedRecords}
-                            paginationText={({ from, to, totalRecords }) => `Showing  ${from} to ${to} of ${totalRecords} entries`}
+                            highlightOnHover
                         />
                     </div>
                 </div>
             </div>
 
-            {/* confirmation popoup  */}
+            {/* Cancel confirm */}
             <ConfirmDialog
                 open={showCancelConfirm}
                 title="Cancel Order"
@@ -351,7 +308,7 @@ const AllOrders = () => {
                 onConfirm={handleCancelOrder}
                 onCancel={() => {
                     setShowCancelConfirm(false);
-                    setSelectedOrder(null); // ✅ Reset
+                    setSelectedOrder(null);
                 }}
                 loading={isCancelling}
             />

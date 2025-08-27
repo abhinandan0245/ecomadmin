@@ -75,7 +75,7 @@ const baseQuery = fetchBaseQuery({
 
 });
 
-// ✅ Custom wrapper to handle 401 errors globally
+//  Custom wrapper to handle 401 errors globally
 const baseQueryWithLogout: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError> = async (
   args,
   api,
@@ -94,7 +94,7 @@ const baseQueryWithLogout: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 export const baseApi = createApi({
   reducerPath: 'api',
   baseQuery: baseQueryWithLogout,
-  tagTypes: ['Faqs', 'Banner', 'Banner2' , 'Banner3' , 'WhyShop' ,  'Customers' , 'Transactions' , 'DeliveredOrders'], // ✅ Add 'Transactions' and 'DeliveredOrders' for future cache support
+  tagTypes: ['Faqs', 'Banner', 'Banner2' , 'Banner3' , 'WhyShop' ,  'Customers' , 'Transactions' , 'DeliveredOrders' , 'shippingInfo' , 'ContactMessage' , 'Orders' , 'Shipments'], // ✅ Add 'Transactions' and 'DeliveredOrders' for future cache support
   endpoints: () => ({}),
   keepUnusedDataFor: 60,
 });

@@ -2,7 +2,6 @@ import Dropdown from '../../components/Dropdown';
 import { IRootState } from '../../store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState, useEffect } from 'react';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { setPageTitle } from '../../store/slices/themeConfigSlice';
 import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
 import IconSettings from '../../components/Icon/IconSettings';
@@ -26,6 +25,7 @@ import IconMicrophoneOff from '../../components/Icon/IconMicrophoneOff';
 import IconDownload from '../../components/Icon/IconDownload';
 import IconCamera from '../../components/Icon/IconCamera';
 import { CalendarDays, CircleUserRound, Mail, Paperclip, Pin } from 'lucide-react';
+import Scrollbars from 'react-custom-scrollbars-2';
 
 const contactList = [
     {
@@ -385,7 +385,7 @@ const Chats = () => {
                     </div> */}
                     <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b]"></div>
                     <div className="!mt-0">
-                        <PerfectScrollbar className="chat-users relative h-full min-h-[100px] sm:h-[calc(100vh_-_357px)] space-y-0.5 ltr:pr-3.5 rtl:pl-3.5 ltr:-mr-3.5 rtl:-ml-3.5">
+                        <Scrollbars className="chat-users relative h-full min-h-[1000px] sm:h-[calc(100vh_-_357px)] space-y-0.5 ltr:pr-3.5 rtl:pl-3.5 ltr:-mr-3.5 rtl:-ml-3.5">
                             {filteredItems.map((person: any) => {
                                 return (
                                     <div key={person.userId}>
@@ -421,7 +421,7 @@ const Chats = () => {
                                     </div>
                                 );
                             })}
-                        </PerfectScrollbar>
+                        </Scrollbars>
                     </div>
                 </div>
                 <div className={`bg-black/60 z-[5] w-full h-full absolute rounded-md hidden ${isShowChatMenu ? '!block xl:!hidden' : ''}`} onClick={() => setIsShowChatMenu(!isShowChatMenu)}></div>
@@ -613,7 +613,7 @@ const Chats = () => {
                             </div>
                             <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b]"></div>
 
-                            <PerfectScrollbar className="relative h-full sm:h-[calc(100vh_-_300px)] chat-conversation-box">
+                            <Scrollbars className="relative h-full sm:h-[calc(100vh_-_300px)] chat-conversation-box">
                                 <div className="space-y-5 p-4 sm:pb-0 pb-[68px] sm:min-h-[300px] min-h-[400px]">
                                     <div className="block m-6 mt-0">
                                         <h4 className="text-xs text-center border-b border-[#f4f4f4] dark:border-gray-800 relative">
@@ -666,7 +666,7 @@ const Chats = () => {
                                         ''
                                     )}
                                 </div>
-                            </PerfectScrollbar>
+                            </Scrollbars>
                             <div className="p-4 absolute bottom-0 left-0 w-full">
                                 <div className="sm:flex w-full space-x-3 rtl:space-x-reverse items-center">
                                     <div className="relative flex-1">

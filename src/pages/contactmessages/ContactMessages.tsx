@@ -9,14 +9,19 @@ import IconPlus from '../../components/Icon/IconPlus';
 import IconEdit from '../../components/Icon/IconEdit';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
-import { useDeleteBanner2Mutation, useGetAllBanners2Query } from '../../../features/banner/banner2Api';
+import { useDeleteContactMessageMutation, useGetContactMessageQuery } from '../../../features/contactmessages/contactMessagesApi';
 import ConfirmDialog from '../../component/ConfirmDailog';
+import { toast } from 'react-toastify';
 
-const HomeBanners2 = () => {
+const ContactMessages = () => {
   const dispatch = useDispatch();
-  const { data: banners = [], isLoading } = useGetAllBanners2Query();
+  const { data: contactMessages = [], isLoading } = useGetContactMessageQuery();
 
-  const [deleteBanner2] = useDeleteBanner2Mutation();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [deleteId, setDeleteId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const [deleteContactMessage] = useDeleteContactMessageMutation();
 
   const PAGE_SIZES = [10, 20, 30, 50, 100];
 
@@ -25,12 +30,6 @@ const HomeBanners2 = () => {
     columnAccessor: 'Title',
     direction: 'asc',
   });
-
-     // State for delete confirmation
-    const [confirmOpen, setConfirmOpen] = useState(false);
-    const [selectedId, setSelectedId] = useState<number | null>(null);
-    const [loading, setLoading] = useState(false);
-
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
@@ -48,22 +47,17 @@ useEffect(() => {
   //  const bannerArray = Array.isArray(response?.banners) ? response.banners : [];
 
 
-   let processed = banners.map((banner: any) => ({
-    id: banner.id,
-    Title: banner.title || '',
-    Description: banner.description || '',
-    Link: banner.linkUrl || '',
-    status: {
-      tooltip: banner.isActive ? 'Active' : 'Inactive',
-      color: banner.isActive ? 'success' : 'danger',
-    },
-    imageUrl: banner.homepageImage || '',
+   let processed = contactMessages.map((contact: any) => ({
+    id: contact.id,
+    Name: contact.name || '',
+    Email: contact.email || '',
+    Message: contact.message || '',
   }));
 
   if (search) {
     const query = search.toLowerCase();
     processed = processed.filter((item: any) =>
-      [item.Title, item.Link, item.status.tooltip]
+      [item.Name, item.Email, item.Message]
         .some((field) => field.toLowerCase().includes(query))
     );
   }
@@ -76,50 +70,49 @@ useEffect(() => {
   const from = (page - 1) * pageSize;
   const to = from + pageSize;
   setRecords(processed.slice(from, to));
-}, [banners, search, sortStatus, page, pageSize]);
+}, [contactMessages, search, sortStatus, page, pageSize]);
 
  useEffect(() => {
-  console.log('Fetched data:', banners);
-}, [banners]);
+  console.log('Fetched data:', contactMessages);
+}, [contactMessages]);
 
-  // Open confirm dialog
+//   delete popup
   const handleDeleteClick = (id: number) => {
-    setSelectedId(id);
+    setDeleteId(id);
     setConfirmOpen(true);
   };
 
-  // Confirm delete
   const handleConfirmDelete = async () => {
-    if (!selectedId) return;
-    try {
+    if (deleteId !== null) {
       setLoading(true);
-      await deleteBanner2(selectedId).unwrap();
-      setConfirmOpen(false);
-      setSelectedId(null);
-    } catch (error) {
-      console.error('Failed to delete banner:', error);
-    } finally {
+      try {
+       const response = await deleteContactMessage(deleteId).unwrap();
+        toast.success(response?.message || 'Message deleted successfully!');
+      } catch (error:any) {
+        console.error('Failed to delete message:', error);
+        toast.error(error?.data?.message || 'Failed to delete message');
+      }
       setLoading(false);
+      setConfirmOpen(false);
+      setDeleteId(null);
     }
   };
-
-  if (isLoading) return <div className="text-center py-5">Loading banners...</div>;
 
   return (
     <div className="flex flex-col gap-4">
       <div className="panel">
-        <p className="text-2xl font-bold w-1/3">Homepage Banners</p>
+        <p className="text-2xl font-bold w-1/3">Contact Messages</p>
       </div>
 
       <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">
         <div className="invoice-table">
           <div className="mb-4.5 px-5 flex md:items-center md:flex-row flex-col gap-5">
-            <div className="flex items-center gap-2">
+            {/* <div className="flex items-center gap-2">
               <Link to="/cmspage/add-banner2" className="btn btn-primary gap-2">
                 <IconPlus />
                 Add New
               </Link>
-            </div>
+            </div> */}
 
             <div className="ltr:ml-auto rtl:mr-auto">
               <input
@@ -134,30 +127,17 @@ useEffect(() => {
 
           <div className="datatables pagination-padding">
             <DataTable
-              className="whitespace-nowrap table-hover invoice-table"
+              className="whitespace-nowrap table-hover  invoice-table"
               records={records}
               columns={[
+                
+                { accessor: 'Name', sortable: true },
+                { accessor: 'Email', sortable: true },
                 {
-                  accessor: 'imageUrl',
-                  sortable: false,
-                  render: ({ imageUrl }) => (
-                    <div className="flex items-center font-semibold">
-                      <div className="p-0.5 bg-white-dark/30 rounded-full w-max ltr:mr-2 rtl:ml-2">
-                        <img
-                          className="h-16 w-16 rounded object-cover"
-                          src={imageUrl || '/fallback.jpg'}
-                          alt="banner"
-                        />
-                      </div>
-                    </div>
-                  ),
-                },
-                { accessor: 'Title', sortable: true },
-                {
-      accessor: 'Description',
+      accessor: 'Message',
       sortable: true,
       title: 'Message',
-      render: ({ Description }) => (
+      render: ({ Message }) => (
         <div
           style={{
             minWidth: 250,
@@ -168,20 +148,19 @@ useEffect(() => {
           }}
           className="py-2"
         >
-          {Description}
+          {Message}
         </div>
       ),
     },
-                { accessor: 'Link', sortable: true },
-                {
-                  accessor: 'status',
-                  sortable: false,
-                  render: ({ status }) => (
-                    <span className={`badge badge-outline-${status.color}`}>
-                      {status.tooltip}
-                    </span>
-                  ),
-                },
+                // {
+                //   accessor: 'status',
+                //   sortable: false,
+                //   render: ({ status }) => (
+                //     <span className={`badge badge-outline-${status.color}`}>
+                //       {status.tooltip}
+                //     </span>
+                //   ),
+                // },
                 {
                   accessor: 'action',
                   title: 'Actions',
@@ -189,11 +168,7 @@ useEffect(() => {
                   textAlignment: 'center',
                   render: ({ id }) => (
                     <div className="flex gap-4 items-center w-max mx-auto">
-                      <Tippy content="Edit">
-                        <NavLink to={`/cmspage/add-banner2/${id}`} className="flex hover:text-info">
-                          <IconEdit className="w-4.5 h-4.5" />
-                        </NavLink>
-                      </Tippy>
+                      
                       <Tippy content="Delete">
                         <button
                           type="button"
@@ -208,7 +183,7 @@ useEffect(() => {
                 },
               ]}
               highlightOnHover
-              totalRecords={Array.isArray(banners) ? banners.length : 0}
+              totalRecords={Array.isArray(contactMessages) ? contactMessages.length : 0}
 
 
               recordsPerPage={pageSize}
@@ -231,20 +206,21 @@ useEffect(() => {
         </div>
       </div>
 
-       {/* ✅ Reusable Confirm Dialog */}
-            <ConfirmDialog
-              open={confirmOpen}
-              title="Delete Banner"
-              message="Are you sure you want to delete this banner? This action cannot be undone."
-              confirmText="Delete"
-              cancelText="Cancel"
-              onConfirm={handleConfirmDelete}
-              onCancel={() => setConfirmOpen(false)}
-              loading={loading}
-            />
+      {/* delete popup  */}
+
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Message"
+        message="Are you sure you want to delete this message?"
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmOpen(false)}
+        loading={loading}
+      />
 
     </div>
   );
 };
 
-export default HomeBanners2;
+export default ContactMessages;

@@ -22,11 +22,11 @@ const rootReducer = combineReducers({
   orders: ordersSlice,
   coupon: couponSlice,
 
-  // ✅ Add RTK Query reducer here
+  //  Add RTK Query reducer here
   [baseApi.reducerPath]: baseApi.reducer,
 });
 
-// ✅ Create a store variable
+// Create a store variable
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>

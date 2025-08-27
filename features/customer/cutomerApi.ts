@@ -6,7 +6,7 @@ export const customerApi = baseApi.injectEndpoints({
     // GET: All customers
     getAllCustomers: builder.query<{ customers: any[] }, void>({
       query: () => '/customer',
-      providesTags: ['Customers'], // ✅ This enables cache invalidation
+      providesTags: ['Customers'], //  This enables cache invalidation
     }),
 
     // GET: Single customer by ID

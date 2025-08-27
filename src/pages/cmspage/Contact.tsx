@@ -21,11 +21,19 @@ const Contact = () => {
     <p><strong>Address:</strong> 123 Main St, City, Country</p>
   `);
 
+  const [facebook, setFacebook] = useState<string>('');
+  const [instagram, setInstagram] = useState<string>('');
+  const [twitter, setTwitter] = useState<string>('');
+  const [snapchat, setSnapchat] = useState<string>('');
+
   const [createContact, { isLoading }] = useCreateContactMutation();
 
   const handleSave = async () => {
     try {
-      await createContact({ content }).unwrap();
+      await createContact({ content ,facebook,
+        instagram,
+        twitter,
+        snapchat, }).unwrap();
       toast.success('Contact page saved successfully!');
     } catch (error) {
       toast.error('Failed to save contact page');
@@ -49,6 +57,39 @@ const Contact = () => {
                 className="bg-white mb-4"
                 theme="snow"
               />
+
+              {/* Social Links Inputs */}
+              <div className="space-y-4 mb-6">
+                <input
+                  type="text"
+                  placeholder="Facebook URL"
+                  value={facebook}
+                  onChange={(e) => setFacebook(e.target.value)}
+                  className="form-input w-full"
+                />
+                <input
+                  type="text"
+                  placeholder="Instagram URL"
+                  value={instagram}
+                  onChange={(e) => setInstagram(e.target.value)}
+                  className="form-input w-full"
+                />
+                <input
+                  type="text"
+                  placeholder="Twitter URL"
+                  value={twitter}
+                  onChange={(e) => setTwitter(e.target.value)}
+                  className="form-input w-full"
+                />
+                <input
+                  type="text"
+                  placeholder="Snapchat URL"
+                  value={snapchat}
+                  onChange={(e) => setSnapchat(e.target.value)}
+                  className="form-input w-full"
+                />
+              </div>
+               
               <button
                 onClick={handleSave}
                 disabled={isLoading}

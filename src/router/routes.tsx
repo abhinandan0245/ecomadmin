@@ -172,6 +172,8 @@ const Faq = lazy(() => import('../pages/Pages/Faq'));
 
 const TermsAndConditions = lazy(() => import('../pages/terms&conditions/TermsAndConditions'));
 const PrivacyPolicy = lazy(() => import('../pages/Privacy&policy/PrivacyPolicy'));
+const ShippingInfo = lazy(() => import('../pages/shippinginfo/ShippingInfo'));
+const ContactMessages = lazy(() => import('../pages/contactmessages/ContactMessages'));
 const RefundPolicy = lazy(() => import('../pages/refund&policy/Refund&policy'));
 const Login = lazy(() => import('../pages/auth/Login'));
 const Register = lazy(() => import('../pages/auth/Register'));
@@ -537,10 +539,22 @@ const routes = [
         element: <PrivacyPolicy />,
          protected: true,
     },   
+    // shipping info
+    {
+        path: '/shippinginfo/shipping-info',
+        element: <ShippingInfo />,
+         protected: true,
+    },   
     // refund
     {
         path: '/refund&policy/refund-policy',
         element: <RefundPolicy />,
+         protected: true,
+    },   
+    // contact messages
+    {
+        path: '/contactmessages/contact-messages',
+        element: <ContactMessages />,
          protected: true,
     },   
 

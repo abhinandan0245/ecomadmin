@@ -42,7 +42,7 @@ const orderSlice = createSlice({
         state.error = action.payload as string;
       })
 
-      // ✅ Get Order By ID
+      //  Get Order By ID
       .addCase(getByIdOrdersThunk.pending, (state) => {
         state.loading = true;
         state.error = null;

@@ -10,6 +10,7 @@ import IconEdit from '../../components/Icon/IconEdit';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
 import { useDeleteBannerMutation, useGetAllBannersQuery } from '../../../features/banner/bannerApi';
+import ConfirmDialog from '../../component/ConfirmDailog';
 
 const HomeBanners = () => {
   const dispatch = useDispatch();
@@ -33,6 +34,11 @@ const HomeBanners = () => {
     columnAccessor: 'Order',
     direction: 'asc',
   });
+
+    // State for delete confirmation
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
 
   // Map and sort banners when data changes
   useEffect(() => {
@@ -76,16 +82,30 @@ const HomeBanners = () => {
     setPage(1);
   }, [sortStatus]);
 
-  // Delete handler
-  const deleteRow = async (id: number) => {
-    if (window.confirm('Are you sure you want to delete this banner?')) {
-      try {
-        await deleteBanner(id).unwrap();
-      } catch (error) {
-        console.error('Failed to delete banner:', error);
-      }
+
+
+
+  // Open confirm dialog
+  const handleDeleteClick = (id: number) => {
+    setSelectedId(id);
+    setConfirmOpen(true);
+  };
+
+  // Confirm delete
+  const handleConfirmDelete = async () => {
+    if (!selectedId) return;
+    try {
+      setLoading(true);
+      await deleteBanner(selectedId).unwrap();
+      setConfirmOpen(false);
+      setSelectedId(null);
+    } catch (error) {
+      console.error('Failed to delete banner:', error);
+    } finally {
+      setLoading(false);
     }
   };
+
 
   if (isLoading) return <div className="text-center py-5">Loading banners...</div>;
 
@@ -157,7 +177,7 @@ const HomeBanners = () => {
                         <button
                           type="button"
                           className="flex hover:text-danger"
-                          onClick={() => deleteRow(id)}
+                          onClick={() => handleDeleteClick(id)}
                         >
                           <IconTrashLines />
                         </button>
@@ -184,6 +204,19 @@ const HomeBanners = () => {
           </div>
         </div>
       </div>
+
+       {/* ✅ Reusable Confirm Dialog */}
+      <ConfirmDialog
+        open={confirmOpen}
+        title="Delete Banner"
+        message="Are you sure you want to delete this banner? This action cannot be undone."
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleConfirmDelete}
+        onCancel={() => setConfirmOpen(false)}
+        loading={loading}
+      />
+
     </div>
   );
 };

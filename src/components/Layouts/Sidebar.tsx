@@ -634,6 +634,31 @@ const Sidebar = () => {
                                         </AnimateHeight>
                                     </li>
 
+                                    {/* contact messages */}
+                                    <li className="menu nav-item">
+                                        <button type="button" className={`${currentMenu === 'contact messages' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('contact messages')}>
+                                            <div className="flex items-center">
+                                                <IconChatNotification className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Contact Messages')}</span>
+                                            </div>
+
+                                            <div className={currentMenu !== 'contact messages' ? 'rtl:rotate-90 -rotate-90' : ''}>
+                                                <IconCaretDown />
+                                            </div>
+                                        </button>
+
+                                        <AnimateHeight duration={300} height={currentMenu === 'contact messages' ? 'auto' : 0}>
+                                            <ul className="sub-menu text-gray-500">
+                                               
+                                                <li>
+                                                    <NavLink to="/contactmessages/contact-messages">{t('contact-messages')}</NavLink>
+                                                </li>
+                                               
+                                              
+                                            </ul>
+                                        </AnimateHeight>
+                                    </li>
+
                                     {/* plans and offers  */}
 
                                     {/* <li className="menu nav-item">
@@ -851,6 +876,22 @@ const Sidebar = () => {
                                             <div className="flex items-center">
                                                 <IconMenuNotes className="group-hover:!text-primary shrink-0" />
                                                 <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Refund Policy')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className="nav-item">
+                                        <NavLink to="/shippinginfo/shipping-info" className="group">
+                                            <div className="flex items-center">
+                                                <IconMenuNotes className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Shipping Info')}</span>
+                                            </div>
+                                        </NavLink>
+                                    </li>
+                                    <li className="nav-item">
+                                        <NavLink to="/shippinginfo/shipping-info" className="group">
+                                            <div className="flex items-center">
+                                                <IconMenuNotes className="group-hover:!text-primary shrink-0" />
+                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Shipping Info')}</span>
                                             </div>
                                         </NavLink>
                                     </li>

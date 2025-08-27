@@ -21,7 +21,7 @@ export const faqApi = baseApi.injectEndpoints({
       providesTags: (result, error, id) => [{ type: 'Faqs', id }],
     }),
 
-    createFaq: builder.mutation<any, { question: string; answer: string }>({
+    createFaq: builder.mutation<any, { title: string; question: string; answer: string }>({
       query: (faq) => ({
         url: '/faqs',
         method: 'POST',
@@ -33,7 +33,7 @@ export const faqApi = baseApi.injectEndpoints({
 
     updateFaq: builder.mutation<
       any,
-      { id: number | string; question: string; answer: string }
+      { id: number | string;  title: string; question: string; answer: string }
     >({
       query: ({ id, ...data }) => ({
         url: `/faqs/${id}`,
