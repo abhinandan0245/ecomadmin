@@ -3,38 +3,24 @@ import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/slices/themeConfigSlice';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { useCreateRefundPolicyMutation } from '../../../features/refondPolicy/refondPolicyApi'; // Adjust the path
+import { useCreateRefundPolicyMutation, useGetRefundPolicyQuery } from '../../../features/refondPolicy/refondPolicyApi'; // Adjust the path
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const PrivacyPolicy = () => {
   const dispatch = useDispatch();
-  const [content, setContent] = useState<string>(`
-    <h2>Refund Policy</h2>
-    <p>We want you to be happy with your purchase. If you're not satisfied, here's how refunds work:</p>
 
-    <h3>Eligibility</h3>
-    <ul>
-      <li>Returns must be made within 30 days of delivery.</li>
-      <li>Items must be unused and in original packaging.</li>
-      <li>Proof of purchase is required.</li>
-    </ul>
+ const { data, isLoading: isFetching } = useGetRefundPolicyQuery();
 
-    <h3>Non-refundable Items</h3>
-    <p>Gift cards, downloadable software, and clearance items cannot be refunded.</p>
-
-    <h3>Refund Process</h3>
-    <p>Once your return is received and inspected, we will notify you via email. Refunds are issued to your original payment method within 5–10 business days.</p>
-
-    <h3>Need Help?</h3>
-    <p>Contact us at <a href="mailto:support@example.com">support@example.com</a> for questions related to refunds.</p>
-  `);
+    const [content, setContent] = useState<string>('');
 
   const [createRefundPolicy, { isLoading }] = useCreateRefundPolicyMutation();
 
-  useEffect(() => {
-    dispatch(setPageTitle('Refund Policy'));
-  }, [dispatch]);
+   useEffect(() => {
+        if (data?.data?.content) {
+          setContent(data.data.content);
+        }
+      }, [data]);
 
   const handleSave = async () => {
     try {

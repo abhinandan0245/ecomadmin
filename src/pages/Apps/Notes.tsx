@@ -1,4 +1,3 @@
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Dialog, Transition } from '@headlessui/react';
 import { Fragment, useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
@@ -18,6 +17,7 @@ import IconPencil from '../../components/Icon/IconPencil';
 import IconTrashLines from '../../components/Icon/IconTrashLines';
 import IconEye from '../../components/Icon/IconEye';
 import IconX from '../../components/Icon/IconX';
+import Scrollbars from 'react-custom-scrollbars-2';
 
 const Notes = () => {
     const dispatch = useDispatch();
@@ -399,7 +399,7 @@ const Notes = () => {
                         </div>
 
                         <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b] my-4"></div>
-                        <PerfectScrollbar className="relative ltr:pr-3.5 rtl:pl-3.5 ltr:-mr-3.5 rtl:-ml-3.5 h-full grow">
+                        <Scrollbars className="relative ltr:pr-3.5 rtl:pl-3.5 ltr:-mr-3.5 rtl:-ml-3.5 h-full grow">
                             <div className="space-y-1">
                                 <button
                                     type="button"
@@ -468,7 +468,7 @@ const Notes = () => {
                                     <div className="ltr:ml-3 rtl:mr-3">Important</div>
                                 </button>
                             </div>
-                        </PerfectScrollbar>
+                        </Scrollbars>
                     </div>
                     <div className="ltr:left-0 rtl:right-0 absolute bottom-0 p-4 w-full">
                         <button className="btn btn-primary w-full" type="button" onClick={() => editNote()}>

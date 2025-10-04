@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// const BASE_URL = 'https://backend.triliv.in/api';
 const BASE_URL = 'http://localhost:5000/api';
 
 // product api 
@@ -26,7 +27,7 @@ export const updateProductAPI = async ( id:string , formData: FormData, token: s
 
 
 export const getAllProductAPI = async (token: string) => {
-  const response = await axios.get(`${BASE_URL}/products` , {
+  const response = await axios.get(`${BASE_URL}/productsAdmin` , {
     headers: {
       Authorization: `Bearer ${token}`,
     //   'Content-Type': 'multipart/form-data',

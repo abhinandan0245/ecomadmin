@@ -6,6 +6,8 @@ import { IRootState } from '../../store';
 import { addBrandThunk, getAllBrandsThunk, updateBrandThunk } from '../../store/thunks/productThunk';
 import { toast } from 'react-toastify';
 import { getAllCategoryAPIThunk } from '../../store/thunks/categoryThunks';
+import Select from "react-select";
+import IconArrowBackward from '../../components/Icon/IconArrowBackward';
 
 const AddBrand = () => {
     const dispatch = useAppDispatch();
@@ -19,6 +21,7 @@ const AddBrand = () => {
     const [status, setStatus] = useState('active');
     const [categoryId, setCategoryId] = useState('active');
     const { categories } = useAppSelector((state) => state.category);
+    const [selectedCategories, setSelectedCategories] = useState<any[]>([]);
 
     // Fetch brands if editing and not loaded
     useEffect(() => {
@@ -33,17 +36,26 @@ const AddBrand = () => {
     }, [dispatch, id, brands.length, loading, categories]);
 
     // Prefill form when editing and brands are loaded
-    useEffect(() => {
-        if (id && brands.length > 0) {
-            const brand = brands.find((b: any) => String(b.id) === String(id));
-            if (brand) {
-                setName(brand.name || '');
-                setDescription(brand.description || '');
-                setStatus(brand.status || 'active'); // <-- add this
-                setCategoryId(brand.categoryId || ''); // <-- add this
+useEffect(() => {
+            if (id && brands.length > 0) {
+                const brand = brands.find((b: any) => String(b.id) === String(id));
+                if (brand) {
+                    setName(brand.name || '');
+                    setDescription(brand.description || '');
+                    setStatus(brand.status || 'active');
+        
+                    // Convert categoryId string "36,34,33" -> [{value:36,label:'coco oil'}, ...]
+                    const savedCategories = brand.categoryId
+                        ? brand.categoryId.split(',').map((id: string) => {
+                            const cat = categories.find((c: any) => c.id === Number(id));
+                            return cat ? { value: cat.id, label: cat.name } : null;
+                        }).filter(Boolean)
+                        : [];
+        
+                    setSelectedCategories(savedCategories);
+                }
             }
-        }
-    }, [id, brands]);
+        }, [id, brands, categories]);
 
     // Show loading while fetching brands for edit
     if (id && (brands.length === 0 || loading)) {
@@ -57,44 +69,59 @@ const AddBrand = () => {
     }
 
     // Handle form submit
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        const data = { name, description, status, categoryId };
-        try {
-            if (id) {
-                await dispatch(updateBrandThunk({ id, data })).unwrap();
-                toast.success('Brand updated successfully!');
-            } else {
-                await dispatch(addBrandThunk(data)).unwrap();
-                toast.success('Brand created successfully!');
+ const handleSubmit = async (e: React.FormEvent) => {
+            e.preventDefault();
+            
+            const data = { name, description, status, 
+                categoryId: selectedCategories.map(cat => cat.value).join(',') 
+             };
+            try {
+                if (id) {
+                    await dispatch(updateBrandThunk({ id, data })).unwrap();
+                    toast.success('Brand updated successfully!');
+                } else {
+                    await dispatch(addBrandThunk(data)).unwrap();
+                    toast.success('Brand created successfully!');
+                }
+                navigate('/products/brands');
+            } catch (error: any) {
+                toast.error('Failed to save Brand: ' + (error?.message || error || ''));
             }
-            navigate('/products/brands');
-        } catch (error: any) {
-            toast.error('Failed to save Brand: ' + (error?.message || error || ''));
-        }
-    };
+        };
 
     return (
         <div className="flex flex-col gap-2.5">
             <div className="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
+              <div className='flex justify-between items-center ltr:xl:mr-6'>
                 <div className="text-lg ps-5 leading-none">{id ? 'Edit Brand' : 'Add New Brand'}</div>
+                  <button type="button" className="btn btn-dark gap-2" onClick={() => navigate(-1)}>
+                                                    <IconArrowBackward />
+                                                    Back To Brands
+                                                </button>
+              </div>
                 <hr className="border-white-light dark:border-[#1b2e4b] my-6" />
                 <form className="mt-8 px-4" onSubmit={handleSubmit}>
                     <div className="text-lg">Brand Details :-</div>
                     <div className="grid  grid-cols-2 items-start ">
-                        <div className="flex items-center mt-4 ">
-                            <label htmlFor="status" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0 ">
-                                Category
-                            </label>
-                            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} id="category" name="categoryId" className="form-select flex-1">
-                                <option value="">Category</option>
-                                {(categories || []).map((cat) => (
-                                    <option key={cat.id} value={cat.id}>
-                                        {cat.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                       <div className="flex items-center mt-4">
+    <label htmlFor="category" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
+        Categories
+    </label>
+    <div className="flex-1">
+        <Select
+        isMulti
+        id="category"
+        name="categoryId"
+        options={(categories || []).map((cat) => ({
+            value: cat.id,
+            label: cat.name,
+        }))}
+        value={selectedCategories}
+        onChange={(selected:any) => setSelectedCategories(selected || [])}
+        placeholder="-- Select Categories --"
+        />
+    </div>
+    </div>
                         <div className="mt-4 flex items-center ml-5">
                             <label htmlFor="BrandName" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
                                 Brand Name

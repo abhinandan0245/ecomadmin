@@ -16,7 +16,7 @@ import Flatpickr from 'react-flatpickr';
 import 'flatpickr/dist/flatpickr.css';
 import { NavLink } from 'react-router-dom';
 import ExportOrdersButton from '../../component/order/allorders/ExportOrdersButton';
-import { useCreateShipmentFromOrderMutation } from '../../../features/shipment/shipmentApi';
+import { useConfirmPickupFromOrderMutation, useCreateShipmentFromOrderMutation } from '../../../features/shipment/shipmentApi';
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
@@ -38,7 +38,9 @@ const AllOrders = () => {
 
     // inside component
     const [createShipmentFromOrder, { isLoading: isCreatingShipment }] = useCreateShipmentFromOrderMutation();
+    const [confirmPickupFromOrder, { isLoading: isConfirmingPickup }] = useConfirmPickupFromOrderMutation();
     const [creatingForId, setCreatingForId] = useState<number | null>(null);
+    const [shipmentCreatedFor, setShipmentCreatedFor] = useState<number | null>(null);
 
     // UI state
     const [page, setPage] = useState(1);
@@ -98,27 +100,43 @@ const AllOrders = () => {
 
     if (isLoading) return <div className="text-center py-10">Loading...</div>;
 
-   // shipment api call
- const handleCreateShipment = async (order: any) => {
-  try {
-    setCreatingForId(order.id);
-    const res = await createShipmentFromOrder({ orderId: order.id }).unwrap();
+    // shipment api call
+    const handleCreateShipment = async (order: any) => {
+        try {
+            setCreatingForId(order.id);
+            const res = await createShipmentFromOrder({ orderId: order.id }).unwrap();
 
-    const waybill = res?.data?.waybill;
-    const shipment = res?.data?.shipment;
+            const waybill = res?.data?.waybill;
+            const shipment = res?.data?.shipment;
 
-    toast.success(
-      res?.message || `Shipment created (WB: ${waybill || "-"})`
-    );
+            toast.success(res?.message || `Shipment created (WB: ${waybill || '-'})`);
 
-    console.log("Shipment object:", shipment); // optional debug
-  } catch (e: any) {
-    toast.error(e?.data?.message || "Failed to create shipment");
-  } finally {
-    setCreatingForId(null);
-  }
+               setShipmentCreatedFor(order.id);
+
+            console.log('Shipment object:', shipment); // optional debug
+        } catch (e: any) {
+            toast.error(e?.data?.message || 'Failed to create shipment');
+        } finally {
+            setCreatingForId(null);
+        }
+    };
+
+
+    const handleConfirmPickup = async (order: any) => {
+    try {
+        const res = await confirmPickupFromOrder({
+            orderId: order.id,
+            pickupDate: new Date().toISOString().slice(0, 10),
+            pickupTime: '14:00:00',
+            expectedPackageCount: 1,
+        }).unwrap();
+
+        toast.success(res?.message || 'Pickup confirmed successfully');
+        setShipmentCreatedFor(null);
+    } catch (e: any) {
+        toast.error(e?.data?.message || 'Failed to confirm pickup');
+    }
 };
-
 
     return (
         <div className="flex flex-col gap-4">
@@ -221,55 +239,57 @@ const AllOrders = () => {
                                     },
                                 },
                                 {
-  accessor: "action",
-  title: "Actions",
-  sortable: false,
-  render: (order) => {
-    const hasShipment =
-      Array.isArray(order.shipments) && order.shipments.length > 0;
+                                    accessor: 'action',
+                                    title: 'Actions',
+                                    sortable: false,
+                                    render: (order) => {
+                                        const hasShipment = Array.isArray(order.shipments) && order.shipments.length > 0;
 
-    // ✅ define canCreate here
-    const canCreate =
-      !hasShipment &&
-      order.orderStatus !== "Cancelled" &&
-      ["Pending", "Processing"].includes(order.orderStatus);
+                                        // ✅ define canCreate here
+                                        // const canCreate = !hasShipment && order.orderStatus !== 'Cancelled' && ['Pending', 'Processing'].includes(order.orderStatus);
+                                        const canCreate = !hasShipment && order.orderStatus !== 'Cancelled' && ['Pending', 'Processing'].includes(order.orderStatus);
 
-    return (
-      <div className="flex gap-2 items-center">
-        {/* View order */}
-        <NavLink to={`/order/order-details/${order.id}`}>
-          <button className="btn btn-sm btn-primary">View</button>
-        </NavLink>
+                                        return (
+                                            <div className="flex gap-2 items-center">
+                                                {/* View order */}
+                                                <NavLink to={`/order/order-details/${order.id}`}>
+                                                    <button className="btn btn-sm btn-primary">View</button>
+                                                </NavLink>
+                                                  
 
-        {/* Shipment */}
-            {canCreate && (
-              <button
-                className="btn btn-sm btn-secondary"
-                onClick={() => handleCreateShipment(order)}
-                disabled={isCreatingShipment && creatingForId === order.id}
-              >
-                {isCreatingShipment && creatingForId === order.id
-                  ? 'Creating...'
-                  : 'Create Shipment'}
-              </button>
-            )}
+                                             {/* Create Shipment button for Processing & Ordered */}
+{canCreate && (
+  <button
+    className="btn btn-sm btn-secondary"
+    onClick={() => {
+      handleCreateShipment(order);
+      setShipmentCreatedFor(order.id);
+    }}
+    disabled={isCreatingShipment && creatingForId === order.id}
+  >
+    {isCreatingShipment && creatingForId === order.id ? 'Creating...' : 'Create Shipment'}
+  </button>
+)}
 
-        {/* Cancel order */}
-        <button
-          className="btn btn-sm btn-danger"
-          onClick={() => {
-            const fullOrder = orders.find((o) => o.id === order.id);
-            setSelectedOrder(fullOrder);
-            setShowCancelConfirm(true);
-          }}
-        >
-          Cancel Order
-        </button>
-      </div>
-    );
-  },
-}
-
+{/* Cancel button for Ordered & Processing */}
+{['Ordered', 'Processing'].includes(order.orderStatus) && (
+  <button
+    className="btn btn-sm btn-danger"
+    onClick={() => {
+      const fullOrder = orders.find((o) => o.id === order.id);
+      setSelectedOrder(fullOrder);
+      setShowCancelConfirm(true);
+    }}
+  >
+    Cancel Order
+  </button>
+)}
+                                               
+                                            
+                                            </div>
+                                        );
+                                    },
+                                },
                             ]}
                             totalRecords={filteredOrders.length}
                             recordsPerPage={pageSize}

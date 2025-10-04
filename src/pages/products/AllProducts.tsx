@@ -646,7 +646,14 @@ const AllProducts = () => {
                                     accessor: 'price',
                                     sortable: true,
                                     titleClassName: 'text-right',
-                                    render: ({ price }) => <div className="text-right font-semibold">{`₹${price}`}</div>,
+                                    render: ({ priceVariants }) => {
+                                        const parsed = JSON.parse(priceVariants || "[]");
+                                        return (
+                                          <div className="text-right font-semibold">
+                                            ₹{parsed[0]?.price || 0}
+                                          </div>
+                                        );
+                                      },
                                 },
                                 {
                                     accessor: 'status',

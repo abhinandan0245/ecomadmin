@@ -13,7 +13,11 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
         return <Navigate to="/auth/login" replace />;
     }
 
-    return token ?  children : <Navigate to="/" replace />;
+    return token ?  children : <Navigate to="/order/allorders" replace />;
 };
 
 export default PrivateRoute;
+
+
+
+

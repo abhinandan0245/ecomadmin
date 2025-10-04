@@ -6,7 +6,6 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import Dropdown from '../../components/Dropdown';
 import Swal from 'sweetalert2';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../../store';
 import { setPageTitle } from '../../store/slices/themeConfigSlice';
@@ -48,6 +47,7 @@ import IconFolder from '../../components/Icon/IconFolder';
 import IconZipFile from '../../components/Icon/IconZipFile';
 import IconDownload from '../../components/Icon/IconDownload';
 import IconTxtFile from '../../components/Icon/IconTxtFile';
+import Scrollbars from 'react-custom-scrollbars-2';
 
 const Mailbox = () => {
     const dispatch = useDispatch();
@@ -1241,7 +1241,7 @@ const Mailbox = () => {
                                 New Message
                             </button>
                         </div>
-                        <PerfectScrollbar className="relative ltr:pr-3.5 rtl:pl-3.5 ltr:-mr-3.5 rtl:-ml-3.5 h-full grow">
+                        <Scrollbars className="relative ltr:pr-3.5 rtl:pl-3.5 ltr:-mr-3.5 rtl:-ml-3.5 h-full grow">
                             <div className="space-y-1">
                                 <button
                                     type="button"
@@ -1413,7 +1413,7 @@ const Mailbox = () => {
                                 </button>
                                 <div className="h-px border-b border-white-light dark:border-[#1b2e4b]"></div>
                             </div>
-                        </PerfectScrollbar>
+                        </Scrollbars>
 
                         <div className="ltr:left-0 rtl:right-0 absolute bottom-0 p-4 w-full">
                             <button

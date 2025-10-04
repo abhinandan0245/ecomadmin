@@ -17,7 +17,8 @@ const Transactions = () => {
   const dispatch = useDispatch();
   const { data, isLoading, isError } = useGetAllTransactionsQuery();
 
-  const transactions: Transaction[] = Array.isArray(data?.transactions) ? data.transactions : [];
+ // safe fallback
+const transactions: Transaction[] = data?.transactions ?? []
 
   const [search, setSearch] = useState('');
   const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);

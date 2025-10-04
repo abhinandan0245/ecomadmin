@@ -1,6 +1,6 @@
 import { Link, NavLink } from 'react-router-dom';
 import { DataTable, DataTableSortStatus } from 'mantine-datatable';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import sortBy from 'lodash/sortBy';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/slices/themeConfigSlice';
@@ -9,7 +9,10 @@ import IconPlus from '../../components/Icon/IconPlus';
 import IconEdit from '../../components/Icon/IconEdit';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
-import { useDeleteBannerMutation, useGetAllBannersQuery } from '../../../features/banner/bannerApi';
+import {
+  useDeleteBannerMutation,
+  useGetAllBannersQuery,
+} from '../../../features/banner/bannerApi';
 import ConfirmDialog from '../../component/ConfirmDailog';
 
 const HomeBanners = () => {
@@ -25,8 +28,6 @@ const HomeBanners = () => {
   const [page, setPage] = useState(1);
   const PAGE_SIZES = [10, 20, 30, 50, 100];
   const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-  const [initialRecords, setInitialRecords] = useState<any[]>([]);
-  const [records, setRecords] = useState<any[]>([]);
   const [selectedRecords, setSelectedRecords] = useState<any[]>([]);
 
   const [search, setSearch] = useState('');
@@ -35,55 +36,49 @@ const HomeBanners = () => {
     direction: 'asc',
   });
 
-    // State for delete confirmation
+  // State for delete confirmation
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Map and sort banners when data changes
-  useEffect(() => {
+  // ✅ Map banners once
+  const initialRecords = useMemo(() => {
     const mapped = banners.map((banner: any) => ({
       id: banner.id,
-      Title: banner.title,
       Link: banner.linkUrl,
-      Order: banner.order?.toString() || '0',
       status: {
         tooltip: banner.isActive ? 'Active' : 'Inactive',
         color: banner.isActive ? 'success' : 'danger',
       },
       imageUrl: banner.homepageImage,
+      mobileImage: banner.mobileImage, 
     }));
 
-    const sorted = sortBy(mapped, 'Order');
-    setInitialRecords(sorted);
+    return sortBy(mapped, 'Order');
   }, [banners]);
 
-  // Filter initialRecords by search text
-  useEffect(() => {
-    const filtered = initialRecords.filter((item) =>
-      [item.Title, item.Link, item.Order, item.status.tooltip]
-        .some((field) => field.toLowerCase().includes(search.toLowerCase()))
-    );
-    setRecords(filtered);
-    setPage(1);
-  }, [search, initialRecords]);
+  // ✅ Apply search, sort, and pagination in one pipeline
+  const records = useMemo(() => {
+    let filtered = initialRecords;
 
-  // Pagination: slice records for current page and page size
-  useEffect(() => {
+    if (search) {
+      filtered = filtered.filter((item) =>
+        [ item.Link,  item.status.tooltip].some((field) =>
+          field.toLowerCase().includes(search.toLowerCase())
+        )
+      );
+    }
+
+    let sorted = sortBy(filtered, sortStatus.columnAccessor);
+    if (sortStatus.direction === 'desc') {
+      sorted = sorted.reverse();
+    }
+
     const from = (page - 1) * pageSize;
     const to = from + pageSize;
-    setRecords((prev) => prev.slice(from, to));
-  }, [page, pageSize]);
 
-  // Sort records on sortStatus change
-  useEffect(() => {
-    const sorted = sortBy(records, sortStatus.columnAccessor);
-    setRecords(sortStatus.direction === 'desc' ? sorted.reverse() : sorted);
-    setPage(1);
-  }, [sortStatus]);
-
-
-
+    return sorted.slice(from, to);
+  }, [initialRecords, search, sortStatus, page, pageSize]);
 
   // Open confirm dialog
   const handleDeleteClick = (id: number) => {
@@ -105,7 +100,6 @@ const HomeBanners = () => {
       setLoading(false);
     }
   };
-
 
   if (isLoading) return <div className="text-center py-5">Loading banners...</div>;
 
@@ -143,22 +137,49 @@ const HomeBanners = () => {
                 {
                   accessor: 'imageUrl',
                   sortable: false,
+                  title: 'Desktop Banner',
                   render: ({ imageUrl }) => (
                     <div className="flex items-center font-semibold">
                       <div className="p-0.5 bg-white-dark/30 rounded-full w-max ltr:mr-2 rtl:ml-2">
-                        <img className="h-16 w-16 rounded object-cover" src={imageUrl} alt="banner" />
+                        <img
+                          className="h-16 w-28 rounded object-cover"
+                          src={imageUrl}
+                          alt="banner"
+                        />
                       </div>
                     </div>
                   ),
                 },
-                { accessor: 'Title', sortable: true },
+                  // Mobile Image
+    {
+      accessor: 'mobileImage',
+      sortable: false,
+      title: 'Mobile Banner',
+      render: ({ mobileImage }) => (
+        <div className="flex items-center font-semibold">
+          {mobileImage ? (
+            <div className="p-0.5 bg-white-dark/30 rounded-full w-max ltr:mr-2 rtl:ml-2">
+              <img
+                className="h-16 w-16 rounded object-cover"
+                src={mobileImage}
+                alt="mobile banner"
+              />
+            </div>
+          ) : (
+            <span className="text-gray-400 text-sm">No mobile image</span>
+          )}
+        </div>
+      ),
+    },
+
                 { accessor: 'Link', sortable: true },
-                { accessor: 'Order', sortable: true },
                 {
                   accessor: 'status',
                   sortable: true,
                   render: ({ status }) => (
-                    <span className={`badge badge-outline-${status.color}`}>{status.tooltip}</span>
+                    <span className={`badge badge-outline-${status.color}`}>
+                      {status.tooltip}
+                    </span>
                   ),
                 },
                 {
@@ -169,7 +190,10 @@ const HomeBanners = () => {
                   render: ({ id }) => (
                     <div className="flex gap-4 items-center w-max mx-auto">
                       <Tippy content="Edit">
-                        <NavLink to={`/cmspage/add-banner/${id}`} className="flex hover:text-info">
+                        <NavLink
+                          to={`/cmspage/add-banner/${id}`}
+                          className="flex hover:text-info"
+                        >
                           <IconEdit className="w-4.5 h-4.5" />
                         </NavLink>
                       </Tippy>
@@ -205,7 +229,7 @@ const HomeBanners = () => {
         </div>
       </div>
 
-       {/* ✅ Reusable Confirm Dialog */}
+      {/* ✅ Reusable Confirm Dialog */}
       <ConfirmDialog
         open={confirmOpen}
         title="Delete Banner"
@@ -216,7 +240,6 @@ const HomeBanners = () => {
         onCancel={() => setConfirmOpen(false)}
         loading={loading}
       />
-
     </div>
   );
 };

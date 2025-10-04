@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../store';
 import ReactApexChart from 'react-apexcharts';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import Dropdown from '../components/Dropdown';
 import { setPageTitle } from '../store/slices/themeConfigSlice';
 import IconHorizontalDots from '../components/Icon/IconHorizontalDots';
@@ -20,6 +19,7 @@ import IconBolt from '../components/Icon/IconBolt';
 import IconCaretDown from '../components/Icon/IconCaretDown';
 import IconPlus from '../components/Icon/IconPlus';
 import IconMultipleForwardRight from '../components/Icon/IconMultipleForwardRight';
+import Scrollbars from 'react-custom-scrollbars-2';
 
 const Dashboard = () => {
     const dispatch = useDispatch();
@@ -632,7 +632,7 @@ const Dashboard = () => {
                 <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
                     <div className="panel h-full sm:col-span-2 xl:col-span-1 pb-0">
                         <h5 className="font-semibold text-lg dark:text-white-light mb-5">Recent Activities</h5>
-                        <PerfectScrollbar className="relative h-[290px] ltr:pr-3 rtl:pl-3 ltr:-mr-3 rtl:-ml-3 mb-4">
+                        <Scrollbars className="relative h-[290px] ltr:pr-3 rtl:pl-3 ltr:-mr-3 rtl:-ml-3 mb-4">
                             <div className="text-sm cursor-pointer">
                                 <div className="flex items-center py-1.5 relative group">
                                     <div className="bg-primary w-1.5 h-1.5 rounded-full ltr:mr-1 rtl:ml-1.5"></div>
@@ -749,7 +749,7 @@ const Dashboard = () => {
                                     </span>
                                 </div>
                             </div>
-                        </PerfectScrollbar>
+                        </Scrollbars>
                         <div className="border-t border-white-light dark:border-white/10">
                             <Link to="/" className=" font-semibold group hover:text-primary p-4 flex items-center justify-center group">
                                 View All

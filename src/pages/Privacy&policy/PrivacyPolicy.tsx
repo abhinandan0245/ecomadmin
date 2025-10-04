@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { setPageTitle } from '../../store/slices/themeConfigSlice';
-import { useCreatePrivacyPolicyMutation } from '../../../features/privacy/privacyApi';
+import { useCreatePrivacyPolicyMutation, useGetPrivacyPolicyQuery } from '../../../features/privacy/privacyApi';
 import ReactQuill from 'react-quill';
 import { toast } from 'react-toastify';
 import 'react-quill/dist/quill.snow.css';
@@ -14,22 +14,17 @@ const PrivacyPolicy = () => {
     dispatch(setPageTitle('Privacy Policy'));
   }, [dispatch]);
 
-  const [content, setContent] = useState<string>(`
-    <h2>Privacy Policy</h2>
-    <p>We respect your privacy and are committed to protecting your personal information.</p>
-    <h3>Information We Collect</h3>
-    <p>We collect data you provide when placing an order, signing up, or contacting support.</p>
-    <h3>How We Use Your Information</h3>
-    <ul>
-      <li>To process orders</li>
-      <li>To send important updates</li>
-      <li>To improve our services</li>
-    </ul>
-    <h3>Data Security</h3>
-    <p>We implement secure practices to protect your data.</p>
-  `);
+ const { data, isLoading: isFetching } = useGetPrivacyPolicyQuery();
+
+  const [content, setContent] = useState<string>('');
 
   const [createPrivacyPolicy, { isLoading }] = useCreatePrivacyPolicyMutation();
+
+   useEffect(() => {
+      if (data?.data?.content) {
+        setContent(data.data.content);
+      }
+    }, [data]);
 
   const handleSave = async () => {
     try {

@@ -4,9 +4,12 @@ import { addCategoryThunk, deleteCategoryThunk, getAllCategoryAPIThunk, updateCa
 interface Category {
     id: string;
     name: string;
-    slug: string;
+    // slug: string;
     status: boolean;
      size?: string[];
+      image?: string;
+     
+     
 }
 
 interface CategoryState {

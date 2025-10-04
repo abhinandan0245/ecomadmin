@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+// const BASE_URL = 'https://backend.triliv.in/api';
 const BASE_URL = 'http://localhost:5000/api';
 
 // get all orders api 

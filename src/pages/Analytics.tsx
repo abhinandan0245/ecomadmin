@@ -2,7 +2,6 @@ import { Link } from 'react-router-dom';
 import ReactApexChart from 'react-apexcharts';
 import { useDispatch, useSelector } from 'react-redux';
 import { IRootState } from '../store';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import Dropdown from '../components/Dropdown';
 import { useEffect } from 'react';
 import { setPageTitle } from '../store/slices/themeConfigSlice';
@@ -24,6 +23,7 @@ import IconThumbUp from '../components/Icon/IconThumbUp';
 import IconCaretsDown from '../components/Icon/IconCaretsDown';
 import IconSquareCheck from '../components/Icon/IconSquareCheck';
 import IconClock from '../components/Icon/IconClock';
+import Scrollbars from 'react-custom-scrollbars-2';
 
 const Analytics = () => {
     const dispatch = useDispatch();
@@ -536,7 +536,7 @@ const Analytics = () => {
                                 </Dropdown>
                             </div>
                         </div>
-                        <PerfectScrollbar className="perfect-scrollbar relative h-[360px] ltr:pr-3 rtl:pl-3 ltr:-mr-3 rtl:-ml-3">
+                        <Scrollbars className="perfect-scrollbar relative h-[360px] ltr:pr-3 rtl:pl-3 ltr:-mr-3 rtl:-ml-3">
                             <div className="space-y-7">
                                 <div className="flex">
                                     <div className="shrink-0 ltr:mr-2 rtl:ml-2 relative z-10 before:w-[2px] before:h-[calc(100%-24px)] before:bg-white-dark/30 before:absolute before:top-10 before:left-4">
@@ -626,7 +626,7 @@ const Analytics = () => {
                                     </div>
                                 </div>
                             </div>
-                        </PerfectScrollbar>
+                        </Scrollbars>
                     </div>
                 </div>
 

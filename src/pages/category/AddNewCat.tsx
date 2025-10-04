@@ -6,19 +6,33 @@ import { IRootState } from '../../store';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { addCategoryThunk, updateCategoryThunk } from '../../store/thunks/categoryThunks';
 import { toast } from 'react-toastify';
-import SlugSuggestionField from './components/SlugSuggestionField';
+
 import { getByIdCategoryAPI } from '../../api/categoryApi';
+import IconArrowBackward from '../../components/Icon/IconArrowBackward';
 
 const AddNew = () => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    // New state for image
+const [image, setImage] = useState<File | null>(null);
+const [preview, setPreview] = useState<string | null>(null);
+
+// Handle image change
+const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+        setImage(file);
+        setPreview(URL.createObjectURL(file));
+    }
+};
+
     const { id } = useParams();
 
     const { loading } = useAppSelector((state: IRootState) => state.category);
     const token = useAppSelector((state) => state.auth.token);
 
     const [name, setName] = useState('');
-    const [slug, setSlug] = useState('');
+    
     const [status, setStatus] = useState(true);
     const [sizeInput, setSizeInput] = useState('');
     const [sizes, setSizes] = useState<string[]>([]);
@@ -33,7 +47,7 @@ const AddNew = () => {
                 try {
                     const data = await getByIdCategoryAPI(id, token);
                     setName(data.name || '');
-                    setSlug(data.slug || '');
+                    
                     setStatus(data.status ?? true);
 
                     // Safely parse sizes
@@ -72,32 +86,43 @@ const AddNew = () => {
     };
 
     const handleSave = async () => {
-        if (!name.trim() || !slug.trim()) {
-            toast.error('Category name & Slug is required!');
-            return;
-        }
+  if (!name.trim()) {
+    toast.error('Category name is required!');
+    return;
+  }
 
-        const payload = { name, slug, status, size: sizes };
+  const formData = new FormData();
+  formData.append("name", name);
+  formData.append("status", String(status));
+  sizes.forEach((s) => formData.append("size[]", s));
+  if (image) formData.append("image", image);
 
-        try {
-            if (id) {
-                await dispatch(updateCategoryThunk({ id, updatedData: payload })).unwrap();
-                toast.success('Category updated successfully!');
-            } else {
-                await dispatch(addCategoryThunk(payload)).unwrap();
-                toast.success('Category added successfully!');
-            }
-            navigate('/category/categories');
-        } catch (err) {
-            console.error('Error saving category:', err);
-            toast.error((err as string) || 'Failed to save category.');
-        }
-    };
+  try {
+    if (id) {
+      await dispatch(updateCategoryThunk({ id, updatedData: formData })).unwrap();
+      toast.success("Category updated successfully!");
+    } else {
+      await dispatch(addCategoryThunk(formData)).unwrap();
+      toast.success("Category added successfully!");
+    }
+    navigate("/category/categories");
+  } catch (err) {
+    console.error("Error saving category:", err);
+    toast.error((err as string) || "Failed to save category.");
+  }
+};
+
 
     return (
         <div className="flex flex-col gap-2.5">
             <div className="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
-                <div className="text-lg ps-5 leading-none">{id ? 'Edit Category' : 'Add New Categories'}</div>
+               <div className='flex justify-between items-center ltr:xl:mr-6'>
+                 <div className="text-lg ps-5 leading-none">{id ? 'Edit Category' : 'Add New Categories'}</div>
+                 <button type="button" className="btn btn-dark gap-2" onClick={() => navigate(-1)}>
+                                    <IconArrowBackward />
+                                    Back to Categories
+                                </button>
+               </div>
                 <hr className="border-white-light dark:border-[#1b2e4b] my-6" />
 
                 <div className="mt-8 px-4">
@@ -119,14 +144,7 @@ const AddNew = () => {
                                 />
                             </div>
 
-                            <div className="mt-4 flex items-center">
-                                <label htmlFor="Slug" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                                    Slug Name
-                                </label>
-                                <div className="flex-1">
-                                    <SlugSuggestionField value={slug ?? ''} onChange={setSlug} />
-                                </div>
-                            </div>
+                           
                         </div>
 
                         <div className="lg:w-1/2 w-full">
@@ -194,6 +212,33 @@ const AddNew = () => {
                             </div>
                         </div>
                     </div>
+
+                    <div className="mt-4 flex items-start">
+    <label htmlFor="CategoryImage" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
+        Category Image
+    </label>
+    <div className="flex-1">
+        <input
+            id="CategoryImage"
+            type="file"
+            accept="image/*"
+            onChange={handleImageChange}
+            className="form-input w-full"
+        />
+
+        {/* Show preview if image selected */}
+        {preview && (
+            <div className="mt-3">
+                <img
+                    src={preview}
+                    alt="Preview"
+                    className="h-24 w-24 object-cover rounded border"
+                />
+            </div>
+        )}
+    </div>
+</div>
+
                 </div>
             </div>
 

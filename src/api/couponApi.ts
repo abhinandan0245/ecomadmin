@@ -1,6 +1,8 @@
 import axios from 'axios';
 
+// const BASE_URL = 'https://backend.triliv.in/api';
 const BASE_URL = 'http://localhost:5000/api';
+
 
 export const createCouponApi = async (couponData: any , token: string) => {
   const response = await axios.post(`${BASE_URL}/coupon`, couponData , {

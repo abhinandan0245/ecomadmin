@@ -11,8 +11,11 @@ export const shippingInfoApi = baseApi.injectEndpoints({
         body,
       }),
     }),
-    getShippingInfo: builder.query({
-      query: () => '/shipping-info',
+   getShippingInfo: builder.query({
+      query: () => ({
+        url: '/shipping-info',
+        method: 'GET',
+      }),
     }),
   }),
 });

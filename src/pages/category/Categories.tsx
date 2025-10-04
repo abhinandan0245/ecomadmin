@@ -208,37 +208,26 @@ const Categories = () => {
                         className="whitespace-nowrap table-hover invoice-table"
                         records={records}
                         columns={[
-                            // {
-                            //     accessor: 'class Id',
-                            //     sortable: true,
-                            //     render: ({ invoice }) => (
-                            //         <NavLink to="/apps/invoice/preview">
-                            //             <div className="text-primary underline hover:no-underline font-semibold">{`#${invoice}`}</div>
-                            //         </NavLink>
-                            //     ),
-                            // },
-                            // {
-                            //     accessor: 'name',
-                            //     sortable: true,
-                            //     render: ({ name}) => (
-                            //         <div className="flex items-center font-semibold">
-                            //             <div className="p-0.5 bg-white-dark/30 rounded-full w-max ltr:mr-2 rtl:ml-2">
-                            //                 <img className="h-8 w-8 rounded-full object-cover" src={`/assets/images/profile-.jpeg`} alt="" />
-                            //             </div>
-                            //             <div>{name}</div>
-                            //         </div>
-                            //     ),
-                            // },
+                            
+                            {
+  accessor: 'image',
+  title: 'Image',
+  sortable: false,
+  render: ({ image }) => (
+    <img
+      src={image}
+      alt="Category"
+      className="h-12 w-12 object-cover rounded-md border"
+    />
+  ),
+},
+
                             {
                                 accessor: 'name',
                                 title: 'Name',
                                 sortable: true,
                             },
-                            {
-                                accessor: 'slug',
-                                title: 'Slug',
-                                sortable: true,
-                            },
+                           
                             {
                                 accessor: 'status',
                                 title: 'Status',

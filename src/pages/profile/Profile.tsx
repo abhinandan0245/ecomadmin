@@ -21,6 +21,7 @@ import { getProfile } from '../../api/authApi';
 import { updateProfileDetailsThunk, uploadProfileImageThunk } from '../../store/thunks/authThunks';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { toast } from 'react-toastify';
+import Contact from '../cmspage/Contact';
 // import { Fragment } from 'react';
 
 
@@ -221,8 +222,8 @@ const Profile = () => {
       
       
     return (
-        <div className='flex flex-col space-y-4'>
-           <div className='panel text-lg ps-5 mb-3 border-b pb-3'>Profile</div>
+        <div className='flex flex-col space-y-2'>
+           <div className='panel text-lg ps-5 mb-2 border-b pb-3'>Profile</div>
 
           <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">
          
@@ -282,177 +283,29 @@ const Profile = () => {
  </div>
 
       </div>
-      {/* password */}
-          {/* <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">
-         
-        
-             <p className='ps-5 text-lg font-semibold'>Password</p>
- <div>
-  
-  
- <div className='grid lg:grid-cols-2 gap-7 px-5'>
-
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              Current Password
-                              </label>
-                              <input id="Current_Password"   type="password"
-  name="currentPassword"
-  value={form.currentPassword}
-  onChange={handleInputChange}  className="form-input flex-1" placeholder="Enter Current Password" />
-                          </div>
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              New Password
-                              </label>
-                              <input id="New_Password" type="password" name="newPassword" className="form-input flex-1" placeholder="Enter New Password" />
-                          </div>
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              Confirm Password
-                              </label>
-                              <input id="Confirm_Password" type="password" name="confirmPassword" className="form-input flex-1" placeholder="Enter Confirm Password" />
-                          </div>
-                          
-                          
-        
-         
-       
-          </div>
-
-          
- </div>
-
-      </div> */}
+      
 
 
- {/* Address */}
-
-          <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">         
-        
-             <p className='ps-5 text-lg font-semibold'>Address</p>
- <div>
-  
  
- <div className='grid lg:grid-cols-2 gap-7 px-5'>
 
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              Billing Address
-                              </label>
-                              <input onChange={handleInputChange} value={form.billingAddress} id="Billing_Address" type="text" name="billingAddress" className="form-input flex-1" placeholder="Enter Billing Address" />
-                          </div>
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              Shipping Address
-                              </label>
-                              <input onChange={handleInputChange} value={form.shippingAddress} id="Shipping_Address" type="text" name="shippingAddress" className="form-input flex-1" placeholder="Enter Shipping Address" />
-                          </div>
-          
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              City
-                              </label>
-                              <input onChange={handleInputChange} value={form.city} id="City" type="text" name="city" className="form-input flex-1" placeholder="Enter City" />
-                          </div>
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              State
-                              </label>
-                              <input onChange={handleInputChange} value={form.state} id="State" type="text" name="state" className="form-input flex-1" placeholder="Enter State" />
-                          </div>
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              Pin Code
-                              </label>
-                              <input onChange={handleInputChange} value={form.pinCode} id="Pin_Code" type="text" name="pinCode" className="form-input flex-1" placeholder="Enter Pin Code" />
-                          </div>
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              Country
-                              </label>
-                              <input onChange={handleInputChange} value={form.country} id="Country" type="text" name="country" className="form-input flex-1" placeholder="Enter Pin Code" />
-                          </div>
-                          
-                          
-        
-         
-       
-          </div>
 
-          
- </div>
 
-      </div>
-
- {/* Bussiness Information */}
-
-          <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">         
-        
-             <p className='ps-5 text-lg font-semibold'>Bussiness Information</p>
- <div>
-  
- 
- <div className='grid lg:grid-cols-2 gap-7 px-5'>
-
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              Company Name
-                              </label>
-                              <input onChange={handleInputChange} value={form.companyName} id="Company_Name" type="text" name="companyName" className="form-input flex-1" placeholder="Enter Company Name" />
-                          </div>
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              Bussiness Email
-                              </label>
-                              <input onChange={handleInputChange} value={form.businessEmail} id="Bussiness_Email" type="text" name="businessEmail" className="form-input flex-1" placeholder="Enter Bussiness Email" />
-                          </div>
-          
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              Tax ID/ GSTIN
-                              </label>
-                              <input onChange={handleInputChange} value={form.taxId} id="Tax_Id" type="text" name="taxId" className="form-input flex-1" placeholder="Enter Tax ID/GSTIN" />
-                          </div>
-          <div className="mt-4 flex items-center">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              Bussiness Type
-                              </label>
-                              <input onChange={handleInputChange} value={form.businessType} id="Bussiness_Type" type="text" name="businessType" className="form-input flex-1" placeholder="Enter Bussiness Type" />
-                          </div>
-         
-                          
-                          
-        
-         
-       
-          </div>
-
-          
- </div>
-
-      </div>
-
-        <div className='panel px-0 border-white-light dark:border-[#1b2e4b]'>
-        <div className='grid lg:grid-cols-2 gap-7 px-5'>
-        <div className="flex items-center ">
-                              <label htmlFor="Name-of-institute" className="ltr:mr-2 rtl:ml-2 w-1/3 mb-0">
-                              Push Notification
-                              </label>
-                              <input type="checkbox" className="form-checkbox" defaultChecked />
-                          </div>
-        </div>
-        </div>
 
       <div className='panel flex justify-between gap-3  items-center py-4'>
-      <button onClick={handleProfileUpdate} type='button' className='btn btn-primary btn-lg w-44 '>Save Changes</button>
+      <button onClick={handleProfileUpdate} type='button' className='btn btn-primary btn w-44 '>Save Changes</button>
      
        <div className='flex gap-4'>
        <button onClick={handleLogout} className='text-red-500 btn '>Logout</button>
-       <button className='text-red-500  btn '>Delete Account</button>
        </div>
       
     </div>
+      
+
+      {/* contactus  */}
+
+      <Contact/>
+
+    
         </div>
     );
 };

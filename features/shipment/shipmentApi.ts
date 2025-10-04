@@ -6,16 +6,17 @@ type ApiResponse<T = any> = { success: boolean; message?: string; data?: T };
 export const shipmentApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     createShipmentFromOrder: builder.mutation<
-  ApiResponse<{ waybill: string; shipment: any }>, // 👈 include shipment
+  ApiResponse<{ waybill: string; shipment: any }>,
   { orderId: number; pickupDate?: string }
 >({
   query: (body) => ({
     url: '/shipment/create',
-    method: 'POST',
+    method: 'POST',   
     body,
   }),
   invalidatesTags: ['Orders', 'Shipments'],
 }),
+
 
     cancelShipment: builder.mutation<ApiResponse, { waybill: string }>({
       query: ({ waybill }) => ({
@@ -24,6 +25,18 @@ export const shipmentApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: ['Orders', 'Shipments'],
     }),
+
+    confirmPickupFromOrder: builder.mutation<
+ApiResponse<any>,
+{ pickupLocation: string; pickupDate?: string; pickupTime?: string; expectedPackageCount?: number }
+>({
+query: (body) => ({
+  url: '/shipment/confirm-pickup',
+  method: 'POST',
+  body,
+}),
+invalidatesTags: ['Shipments'],
+}),
 
     trackShipment: builder.query<ApiResponse, { waybill: string }>({
       query: ({ waybill }) => `/shipment/track/${waybill}`,
@@ -35,5 +48,6 @@ export const shipmentApi = baseApi.injectEndpoints({
 export const {
   useCreateShipmentFromOrderMutation,
   useCancelShipmentMutation,
+  useConfirmPickupFromOrderMutation,
   useTrackShipmentQuery,
 } = shipmentApi;

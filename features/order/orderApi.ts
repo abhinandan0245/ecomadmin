@@ -4,22 +4,28 @@ import { Order } from '../../src/types';
 
 export const orderApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-
     getAllOrders: builder.query<{ success: boolean; count: number; data: Order[] }, void>({
-  query: () => '/order',
-  providesTags: ['Orders'],
-}),
+      query: () => '/order',
+      providesTags: ['Orders'],
+    }),
+    
+    getOrderById: builder.query<{ success: boolean; data: Order }, number>({
+      query: (id) => `/order/${id}`,
+      providesTags: ['Orders'],
+    }),
 
-    // Cancel order
     cancelOrder: builder.mutation<{ message: string }, number>({
       query: (orderId) => ({
         url: `/order/${orderId}/cancel`,
         method: 'PATCH',
       }),
-      invalidatesTags: ['Orders'], // refresh order list automatically
+      invalidatesTags: ['Orders'],
     }),
-    
   }),
 });
 
-export const { useGetAllOrdersQuery , useCancelOrderMutation } = orderApi;
+export const { 
+  useGetAllOrdersQuery, 
+  useGetOrderByIdQuery, 
+  useCancelOrderMutation 
+} = orderApi;

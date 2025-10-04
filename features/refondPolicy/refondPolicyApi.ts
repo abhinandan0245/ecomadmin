@@ -11,8 +11,11 @@ export const refundPolicyApi = baseApi.injectEndpoints({
         body,
       }),
     }),
-    getRefundPolicy: builder.query({
-      query: () => '/refund-policy',
+getRefundPolicy: builder.query({
+      query: () => ({
+        url: '/refund-policy',
+        method: 'GET',
+      }),
     }),
   }),
 });

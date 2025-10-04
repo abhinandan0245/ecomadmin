@@ -1,6 +1,8 @@
 import axios from 'axios';
 
+// const BASE_URL = 'https://backend.triliv.in/api/user';
 const BASE_URL = 'http://localhost:5000/api/user';
+
 
 // login
 export const loginUser = async (email: string, password: string) => {

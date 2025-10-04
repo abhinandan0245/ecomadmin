@@ -18,6 +18,11 @@ import { Dialog, Transition } from '@headlessui/react';
 import { Fragment,useRef } from 'react';
 import IconX from '../../components/Icon/IconX';
 
+interface Props {
+  orders: any[];
+}
+
+
 const orders = [
     { id: "ORD001", customer: "John Doe", date: "2025-04-10", status: "Delivered",  total: 149.99 },
     { id: "ORD002", customer: "Alice Smith", date: "2025-04-11", status: "Pending", total: 89.50 },
@@ -382,7 +387,7 @@ const [approveReturnPopUp, setApproveReturnPopUp] = useState<any>(false);
                             <IconPlus />
                             Add New
                         </Link> */}
-                       <ExportOrdersButton orders={orders} />
+                      <ExportOrdersButton orders={orders as any[]} />
                     </div>
                     
                     <div className="ltr:ml-auto rtl:mr-auto">

@@ -15,8 +15,7 @@ import { toast } from 'react-toastify';
 
 const ContactMessages = () => {
   const dispatch = useDispatch();
-  const { data: contactMessages = [], isLoading } = useGetContactMessageQuery();
-
+  const { data: contactMessages = [], isLoading } = useGetContactMessageQuery(undefined)
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);

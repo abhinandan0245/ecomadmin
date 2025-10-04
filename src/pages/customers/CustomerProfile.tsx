@@ -1,9 +1,11 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useGetCustomerByIdQuery } from '../../../features/customer/cutomerApi';
+import IconArrowBackward from '../../components/Icon/IconArrowBackward';
 
 const CustomerProfile = () => {
   const { id } = useParams(); // Get customer ID from URL
 const { data, isLoading, error } = useGetCustomerByIdQuery(id!);
+const navigate = useNavigate();
 
 if (isLoading) return <div>Loading...</div>;
 if (error || !data || !data.customer) return <div>Failed to load customer</div>;
@@ -16,7 +18,13 @@ const customer = data.customer;
 
   return (
     <div className="flex flex-col space-y-4">
-      <div className="panel text-lg ps-5 mb-3 border-b pb-3">Customer Profile</div>
+    <div className=' panel flex justify-between items-center '>
+        <div className=" text-lg ps-5 ">Customer Profile</div>
+           <button type="button" className="btn btn-dark gap-2" onClick={() => navigate(-1)}>
+                                                          <IconArrowBackward />
+                                                          Back To Customers
+                                                      </button>
+    </div>
 
       {/* Personal Info */}
 <div className="panel px-0 border-white-light dark:border-[#1b2e4b]">

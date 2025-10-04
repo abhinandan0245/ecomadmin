@@ -11,7 +11,6 @@ import IconEdit from '../../components/Icon/IconEdit';
 import IconEye from '../../components/Icon/IconEye';
 import Tippy from '@tippyjs/react';
 import 'tippy.js/dist/tippy.css';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import { Dialog, Transition } from '@headlessui/react';
 
 

@@ -66,6 +66,7 @@ import { logout } from '../store/slices/authSlice'; // ✅ your logout action
 import type { BaseQueryFn, FetchArgs, FetchBaseQueryError } from '@reduxjs/toolkit/query';
 
 const baseQuery = fetchBaseQuery({
+  // baseUrl: 'https://backend.triliv.in/api',
   baseUrl: 'http://localhost:5000/api',
  prepareHeaders: (headers, { getState }) => {
   const token = (getState() as IRootState).auth.token || localStorage.getItem('TOKEN');
@@ -83,8 +84,8 @@ const baseQueryWithLogout: BaseQueryFn<string | FetchArgs, unknown, FetchBaseQue
 ) => {
   const result = await baseQuery(args, api, extraOptions);
 
-  if (result.error && result.error.status === 401) {
-    // Auto logout if token is invalid or expired
+  if (result.error && (result.error.status === 401 || result.error.status === 403)) {
+    // Auto logout if token is invalid, expired, or forbidden
     api.dispatch(logout());
   }
 

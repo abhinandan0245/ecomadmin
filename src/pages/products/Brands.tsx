@@ -128,13 +128,37 @@ const Brands = () => {
                                     ),
                                 },
                                 {
-                                    accessor: 'description',
+                                    accessor: 'category',
                                     sortable: true,
+                                    render: ({ categoryNames }) => {
+                                       if (!Array.isArray(categoryNames) || categoryNames.length === 0) {
+                                            return <div className="flex items-center font-semibold">-</div>;
+                                        }
+
+                                        const visibleNames = categoryNames.slice(0, 1).join(', ');
+                                        const hiddenNames = categoryNames.slice(1).join(', ');
+                                      
+                                        return (
+                                          <div className="flex items-center font-semibold">
+                                            <div
+                                              title={hiddenNames ? hiddenNames : ''}
+                                              className="cursor-default"
+                                            >
+                                              {hiddenNames ? `${visibleNames}, ...` : visibleNames}
+                                            </div>
+                                          </div>
+                                        );
+                                      }
                                 },
                                 {
                                     accessor: 'totalProduct',
                                     title: 'Total Products',
                                     sortable: true,
+                                    render: ({ totalProducts }) => (
+                                        <div className="flex items-center font-semibold">
+                                             <div>{totalProducts}</div>
+                                        </div>
+                                    ),
                                 },
                                 {
                                     accessor: 'status',

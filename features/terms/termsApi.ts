@@ -10,7 +10,14 @@ export const termsApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    
+    getTermsConditions: builder.query({
+      query: () => ({
+        url: '/terms-conditions',
+        method: 'GET',
+      }),
+    }),
   }),
 });
 
-export const { useCreateTermsConditionsMutation } = termsApi;
+export const { useCreateTermsConditionsMutation, useGetTermsConditionsQuery } = termsApi;

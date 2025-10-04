@@ -102,7 +102,7 @@ const Sidebar = () => {
                         <li className="nav-item">
                                 <ul>
                                     {/* dashboard */}
-                                <li className="menu nav-item">
+                                {/* <li className="menu nav-item">
                                 <button type="button" className={`${currentMenu === 'dashboard' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('dashboard')}>
                                     <div className="flex items-center">
                                         <IconMenuDashboard
@@ -126,12 +126,10 @@ const Sidebar = () => {
                                         <li>
                                             <NavLink to="/finance">{t('Recent activity')}</NavLink>
                                         </li>
-                                        {/* <li>
-                                            <NavLink to="/crypto">{t('crypto')}</NavLink>
-                                        </li> */}
+                                       
                                     </ul>
                                 </AnimateHeight>
-                            </li>
+                            </li> */}
                                     {/* profile  */}
                                     <li className="nav-item">
                                         <NavLink to="/profile/profile" className="group">
@@ -189,27 +187,18 @@ const Sidebar = () => {
                                                 <li>
                                                     <NavLink to="/products/allproducts">{t('All Products')}</NavLink>
                                                 </li>
-                                                <li>
-                                                    <NavLink to="/products/addnew">{t('Add New Products')}</NavLink>
-                                                </li>
                                                 {/* <li>
-                                                    <NavLink to="/products/categories">{t('Categories')}</NavLink>
+                                                    <NavLink to="/products/addnew">{t('Add New Products')}</NavLink>
                                                 </li> */}
+                                                
                                                 <li>
                                                     <NavLink to="/products/brands">{t('Brands')}</NavLink>
                                                 </li>
                                                 <li>
                                                     <NavLink to="/products/inventory">{t('Inventory Management')}</NavLink>
                                                 </li>
-                                                <li>
-                                                    <NavLink to="/products/product-reviews">{t('Product Reviews')}</NavLink>
-                                                </li>
-                                                {/* <li>
-                                                    <NavLink to="/apps/invoice/preview">{t('View Classes')}</NavLink>
-                                                </li> */}
-                                                {/* <li>
-                                                    <NavLink to="/class/editclass">{t('Edit Classes')}</NavLink>
-                                                </li> */}
+                                               
+                                                
                                             </ul>
                                         </AnimateHeight>
                                     </li>
@@ -233,28 +222,13 @@ const Sidebar = () => {
                                                 <li>
                                                     <NavLink to="/order/allorders">{t('All Orders')}</NavLink>
                                                 </li>
-                                                {/* <li>
-                                                    <NavLink to="/order/order-details">{t('Orders Details')}</NavLink>
-                                                </li> */}
-                                                <li>
-                                                    <NavLink to="/order/delivered-order">{t('Delivered Order')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/order/refund-return">{t('Returns/Refunds')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/order/viewsubject">{t('Shipping Management')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/order/invoice/preview-invoice">{t('Invoice')}</NavLink>
-                                                </li>
-                                                {/* <li>
-                                                    <NavLink to="/apps/invoice/preview">{t('View Subject')}</NavLink>
-                                                </li> */}
                                                
                                                 {/* <li>
-                                                    <NavLink to="/apps/invoice/edit">{t('Edit Subject')}</NavLink>
+                                                    <NavLink to="/order/refund-return">{t('Returns/Refunds')}</NavLink>
                                                 </li> */}
+                                                
+                                               
+                                               
                                             </ul>
                                         </AnimateHeight>
                                     </li>
@@ -313,110 +287,15 @@ const Sidebar = () => {
                                                 <li>
                                                     <NavLink to="/transactions/transactions">{t('Transactions')}</NavLink>
                                                 </li>
+                                                
                                                 {/* <li>
-                                                    <NavLink to="/transactions/payment-method">{t('Payments Method')}</NavLink>
-                                                </li> */}
-                                                <li>
                                                     <NavLink to="/transactions/refund-logs">{t('Refunds Logs')}</NavLink>
-                                                </li>
-                                                {/* <li>
-                                                    <NavLink to="/apps/invoice/add">{t('add')}</NavLink>
                                                 </li> */}
-                                                {/* <li>
-                                                    <NavLink to="/apps/invoice/edit">{t('Edit Teacher')}</NavLink>
-                                                </li> */}
+                                                
                                             </ul>
                                         </AnimateHeight>
                                     </li>
-                                    {/* Shipping */}
-
-                                    <li className="menu nav-item">
-                                        <button type="button" className={`${currentMenu === 'Shipping' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('Shipping')}>
-                                            <div className="flex items-center">
-                                                <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Shipping')}</span>
-                                            </div>
-
-                                            <div className={currentMenu !== 'Shipping' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                                <IconCaretDown />
-                                            </div>
-                                        </button>
-
-                                        <AnimateHeight duration={300} height={currentMenu === 'Shipping' ? 'auto' : 0}>
-                                            <ul className="sub-menu text-gray-500">
-                                                {/* <li>
-                                                    <NavLink to="/shipping/shipping-methods">{t('Shipping Methods')}</NavLink>
-                                                </li> */}
-                                                <li>
-                                                    <NavLink to="/shipping/add-zone">{t('Add Zone')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/shipping/shipping-zone-rate">{t('Shipping Zones / Rates')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/shipping/delivery-partners">{t('Delivery Partners')}</NavLink>
-                                                </li>
-                                                {/* <li>
-                                                    <NavLink to="/apps/invoice/add">{t('add')}</NavLink>
-                                                </li> */}
-                                                {/* <li>
-                                                    <NavLink to="/apps/invoice/edit">{t('Edit Exam')}</NavLink>
-                                                </li> */}
-                                            </ul>
-                                        </AnimateHeight>
-                                    </li>
-                                    {/* Coupons/Discount*/}
-
-                                    {/* <li className="menu nav-item">
-                                        <button type="button" className={`${currentMenu === 'Coupons/Discount' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('Coupons/Discount')}>
-                                            <div className="flex items-center">
-                                                <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Coupons/Discount')}</span>
-                                            </div>
-
-                                            <div className={currentMenu !== 'Coupons/Discount' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                                <IconCaretDown />
-                                            </div>
-                                        </button>
-
-                                        <AnimateHeight duration={300} height={currentMenu === 'Coupons/Discount' ? 'auto' : 0}>
-                                            <ul className="sub-menu text-gray-500">
-                                                <li>
-                                                    <NavLink to="/attendance/student-atten">{t('Student Attendance')}</NavLink>
-                                                </li>
-                                        <li className="menu nav-item">
-                                            <button
-                                                type="button"
-                                                className={`${
-                                                    billSubMenu ? 'open' : ''
-                                                } w-full before:bg-gray-300 before:w-[5px] before:h-[5px] before:rounded ltr:before:mr-2 rtl:before:ml-2 dark:text-[#888ea8] hover:bg-gray-100 dark:hover:bg-gray-900`}
-                                                onClick={() => setBillSubMenu(!billSubMenu)}
-                                            >
-                                                {t('Teacher Attendance')}
-                                                <div className={`${billSubMenu ? 'rtl:rotate-90 -rotate-90' : ''} ltr:ml-auto rtl:mr-auto`}>
-                                                    <IconCaretsDown fill={true} className="w-4 h-4" />
-                                                </div>
-                                            </button>
-                                            <AnimateHeight duration={300} height={billSubMenu ? 'auto' : 0}>
-                                                <ul className="sub-menu text-gray-500">
-                                                    <li>
-                                                        <a href="/attendance/teacher/upload-atten" target="_blank">
-                                                            {t('Upload Attendance')}
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="/attendance/teacher/view-atten" target="_blank">
-                                                            {t('View Attendance')}
-                                                        </a>
-                                                    </li>
-                                                    
-                                                </ul>
-                                            </AnimateHeight>
-                                        </li>
-                                               
-                                            </ul>
-                                        </AnimateHeight>
-                                    </li> */}
+                                    
 
                                     {/* Coupons/Discount */}
 
@@ -448,144 +327,11 @@ const Sidebar = () => {
                                         </AnimateHeight>
                                     </li>
 
-                                    {/*  Reports / Analytics  */}
-{/* 
-                                    <li className="menu nav-item">
-                                        <button type="button" className={`${currentMenu === 'Reports/Analytics' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('Reports/Analytics')}>
-                                            <div className="flex items-center">
-                                                <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Reports/Analytics')}</span>
-                                            </div>
+                                   
+                                    
+                                   
 
-                                            <div className={currentMenu !== 'Reports/Analytics' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                                <IconCaretDown />
-                                            </div>
-                                        </button>
-
-                                        <AnimateHeight duration={300} height={currentMenu === 'Reports/Analytics' ? 'auto' : 0}>
-                                            <ul className="sub-menu text-gray-500">
-                                                <li>
-                                                    <NavLink to="/apps/invoice/list">{t('Sales Reports')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/apps/invoice/list">{t('Order Reports')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/result/view-result">{t('Product Performance')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/apps/invoice/add">{t('Customer Analytics')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="//result/view-result">{t('Abandoned Carts')}</NavLink>
-                                                </li>
-                                            </ul>
-                                        </AnimateHeight>
-                                    </li> */}
-                                    {/* Invoices & Tax  */}
-
-                                    <li className="menu nav-item">
-                                        <button type="button" className={`${currentMenu === 'Invoices & Tax' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('Invoices & Tax')}>
-                                            <div className="flex items-center">
-                                                <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Invoices & Tax')}</span>
-                                            </div>
-
-                                            <div className={currentMenu !== 'Invoices & Tax' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                                <IconCaretDown />
-                                            </div>
-                                        </button>
-
-                                        <AnimateHeight duration={300} height={currentMenu === 'Invoices & Tax' ? 'auto' : 0}>
-                                            <ul className="sub-menu text-gray-500">
-                                                <li>
-                                                    <NavLink to="/invoiceandtax/invoice-setting">{t('Invoice Settings ')}</NavLink>
-                                                </li>
-                                               
-                                                {/* <li>
-                                                    <NavLink to="/syllabus/view-syllabus">{t('Tax Configuration ')}</NavLink>
-                                                </li> */}
-                                                {/* <li>
-                                                    <NavLink to="/apps/invoice/add">{t('GST/VAT Settings (if applicable)')}</NavLink>
-                                                </li> */}
-                                                {/* <li>
-                                                    <NavLink to="/apps/invoice/edit">{t('Edit Syllabus ')}</NavLink>
-                                                </li> */}
-                                            </ul>
-                                        </AnimateHeight>
-                                    </li>
-                                    {/*Admin Management */}
-
-                                    {/* <li className="menu nav-item">
-                                        <button type="button" className={`${currentMenu === 'Admin Management' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('Admin Management')}>
-                                            <div className="flex items-center">
-                                                <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Admin Management')}</span>
-                                            </div>
-
-                                            <div className={currentMenu !== 'Admin Management' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                                <IconCaretDown />
-                                            </div>
-                                        </button>
-
-                                        <AnimateHeight duration={300} height={currentMenu === 'Admin Management' ? 'auto' : 0}>
-                                            <ul className="sub-menu text-gray-500">
-                                                <li>
-                                                    <NavLink to="/adminuserrole/admin-user">{t('Admin Users / Roles ')}</NavLink>
-                                                </li>
-                                               
-                                                <li>
-                                                    <NavLink to="/adminuserrole/permissions">{t('Permissions')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/adminuserrole/activity-logs">{t('Activity Logs')}</NavLink>
-                                                </li>
-                                               
-                                            </ul>
-                                        </AnimateHeight>
-                                    </li> */}
-
-                                    {/* Contact / Support */}
-
-                                    <li className="menu nav-item">
-                                        <button type="button" className={`${currentMenu === 'Contact / Support' ? 'active' : ''} nav-link group w-full`} onClick={() => toggleMenu('Contact / Support')}>
-                                            <div className="flex items-center">
-                                                <IconMenuInvoice className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Contact / Support')}</span>
-                                            </div>
-
-                                            <div className={currentMenu !== 'Contact / Support' ? 'rtl:rotate-90 -rotate-90' : ''}>
-                                                <IconCaretDown />
-                                            </div>
-                                        </button>
-
-                                        <AnimateHeight duration={300} height={currentMenu === 'Contact / Support' ? 'auto' : 0}>
-                                            <ul className="sub-menu text-gray-500">
-                                                {/* <li>
-                                                    <NavLink to="/contactsupport/contact-message">{t('Contact Messages ')}</NavLink>
-                                                </li> */}
-                                                <li>
-                                                    <NavLink to="/contactsupport/chat">{t('Support Tickets ')}</NavLink>
-                                                </li>
-                                                {/* <li>
-                                                    <NavLink to="/contactsupport/support-tickets">{t('Support Tickets ')}</NavLink>
-                                                </li> */}
-                                                {/* <li>
-                                                    <NavLink to="/studenttransferreq/request-status">{t('FAQs ')}</NavLink>
-                                                </li> */}
-                                               
-                                                {/* <li>
-                                                    <NavLink to="/apps/invoice/preview">{t('List of Student Applied for Transfer')}</NavLink>
-                                                </li> */}
-                                                {/* <li>
-                                                    <NavLink to="/apps/invoice/add">{t('add')}</NavLink>
-                                                </li> */}
-                                                {/* <li>
-                                                    <NavLink to="/apps/invoice/edit">{t('Edit Role ')}</NavLink>
-                                                </li> */}
-                                            </ul>
-                                        </AnimateHeight>
-                                    </li>
+                                    
                                     {/* cms page */}
 
                                     <li className="menu nav-item">
@@ -605,31 +351,19 @@ const Sidebar = () => {
                                                 <li>
                                                     <NavLink to="/cmspage/home-banners">{t('Home Page Banners')}</NavLink>
                                                 </li>
-                                                <li>
-                                                    <NavLink to="/cmspage/home-banners-2">{t('Home Page-2')}</NavLink>
-                                                </li>
-                                                <li>
-                                                    <NavLink to="/cmspage/home-banners-3">{t('Home Page-3')}</NavLink>
-                                                </li>
-                                                <li>
+                                                 <li>
                                                     <NavLink to="/cmspage/whyshops">{t('Why Shop')}</NavLink>
                                                 </li>
+                                                <li>
+                                                    <NavLink to="/cmspage/home-banners-2">{t('Why Triliv')}</NavLink>
+                                                </li>
+                                                
+                                               
                                                
                                                 <li>
                                                     <NavLink to="/cmspage/aboutus">{t('About Us')}</NavLink>
                                                 </li>
-                                                <li>
-                                                    <NavLink to="/cmspage/contact">{t('Contact Page')}</NavLink>
-                                                </li>
-                                                {/* <li>
-                                                    <NavLink to="/notification/single-class">{t('Single Class ')}</NavLink>
-                                                </li> */}
-                                                {/* <li>
-                                                    <NavLink to="/notification/whole-institute">{t('Terms & Policies')}</NavLink>
-                                                </li> */}
-                                                {/* <li>
-                                                    <NavLink to="/notification/view-notifications">{t('View Notifications Sent ')}</NavLink>
-                                                </li> */}
+                                               
                                             </ul>
                                         </AnimateHeight>
                                     </li>
@@ -887,14 +621,7 @@ const Sidebar = () => {
                                             </div>
                                         </NavLink>
                                     </li>
-                                    <li className="nav-item">
-                                        <NavLink to="/shippinginfo/shipping-info" className="group">
-                                            <div className="flex items-center">
-                                                <IconMenuNotes className="group-hover:!text-primary shrink-0" />
-                                                <span className="ltr:pl-3 rtl:pr-3 text-black dark:text-[#506690] dark:group-hover:text-white-dark">{t('Shipping Info')}</span>
-                                            </div>
-                                        </NavLink>
-                                    </li>
+                                    
 
                                    
                                 </ul>

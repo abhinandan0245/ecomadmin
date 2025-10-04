@@ -2,28 +2,46 @@
 
 import axios from 'axios';
 
+// const BASE_URL = 'https://backend.triliv.in/api/category';
 const BASE_URL = 'http://localhost:5000/api/category';
-
 // add category api 
 
-export const addCategoryAPI = async (data: { name: string; slug: string; status:boolean , size?: string[]}, token: string) => {
+// ✅ Add Category API (with image)
+export const addCategoryAPI = async (data: FormData, token: string) => {
   const response = await axios.post(
     `${BASE_URL}/category`,
     data,
     {
       headers: {
         Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
       },
     }
   );
   return response.data;
 };
 
+// ✅ Update Category API (with image)
+export const updateCategoryApi = async (id: string, updatedData: FormData, token: string) => {
+  const response = await axios.put(
+    `${BASE_URL}/category/${id}`,
+    updatedData,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data',
+      },
+    }
+  );
+  return response.data;
+};
+
+
 // get all category api 
 
 export const getAllCategoryAPI = async ( token: string) => {
   const response = await axios.get(
-    `${BASE_URL}/categories`,
+    `${BASE_URL}/categoriesAdmin`,
     
     {
       headers: {
@@ -59,18 +77,6 @@ export const getSearchByNameCategoryAPI = async (name: string, token: string) =>
 
 export const deleteCategoryApi = async (id:string , token:string) => {
      const response = await axios.delete(`${BASE_URL}/category/${id}` , {
-      headers:{
-        Authorization:`Bearer ${token}`
-      }
-     }
-    
-    );
-    return response.data;
-};
-// update category api 
-
-export const updateCategoryApi = async (id:string ,  updatedData: { name?: string; slug?: string; status?: boolean , size?: string[]}, token:string) => {
-     const response = await axios.put(`${BASE_URL}/category/${id}`, updatedData , {
       headers:{
         Authorization:`Bearer ${token}`
       }

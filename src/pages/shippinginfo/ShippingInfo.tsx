@@ -5,7 +5,7 @@ import ReactQuill from 'react-quill';
 import { toast } from 'react-toastify';
 import 'react-quill/dist/quill.snow.css';
 import 'react-toastify/dist/ReactToastify.css';
-import { useCreateShippingInfoMutation } from '../../../features/shippingInfo/shippingInfoApi';
+import { useCreateShippingInfoMutation, useGetShippingInfoQuery } from '../../../features/shippingInfo/shippingInfoApi';
 
 const ShippingInfo = () => {
   const dispatch = useDispatch();
@@ -14,22 +14,18 @@ const ShippingInfo = () => {
     dispatch(setPageTitle('Shipping Information'));
   }, [dispatch]);
 
-  const [content, setContent] = useState<string>(`
-    <h2>Shipping Information</h2>
-    <p>We respect your privacy and are committed to protecting your personal information.</p>
-    <h3>Information We Collect</h3>
-    <p>We collect data you provide when placing an order, signing up, or contacting support.</p>
-    <h3>How We Use Your Information</h3>
-    <ul>
-      <li>To process orders</li>
-      <li>To send important updates</li>
-      <li>To improve our services</li>
-    </ul>
-    <h3>Data Security</h3>
-    <p>We implement secure practices to protect your data.</p>
-  `);
+const { data, isLoading: isFetching } = useGetShippingInfoQuery();
+
+  const [content, setContent] = useState<string>('');
+
+    useEffect(() => {
+        if (data?.data?.content) {
+          setContent(data.data.content);
+        }
+      }, [data]);
 
   const [createShippingInfo, { isLoading }] = useCreateShippingInfoMutation();
+
 
   const handleSave = async () => {
     try {

@@ -88,7 +88,6 @@ const ChangePassword = () => {
               currentPassword: form.currentPassword,
               newPassword: form.newPassword,
               confirmPassword: form.confirmPassword,
-              token: token as string,
             })
           ).unwrap();
            

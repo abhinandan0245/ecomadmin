@@ -7,6 +7,7 @@ import { createCouponThunk, getByIdCouponsThunk, updateCouponsThunk } from '../.
 import { toast } from 'react-toastify';
 import { getAllProductThunk } from '../../store/thunks/productThunk';
 import { clearCouponMessages } from '../../store/slices/couponSlice';
+import IconArrowBackward from '../../components/Icon/IconArrowBackward';
 
 interface Option {
     value: string;
@@ -32,6 +33,7 @@ const CreateCoupons = () => {
     const [combineWithOtherCoupons, setCombineWithOtherCoupons] = useState(false);
     const [customerSegment, setCustomerSegment] = useState('');
     const [isActive, setIsActive] = useState(false);
+    const [showOnFronted, setShowOnFronted] = useState(false);
     const [productOptions, setProductOptions] = useState<Option[]>([]);
     const [selectedProducts, setSelectedProducts] = useState<Option[]>([]);
     const [hasSubmitted, setHasSubmitted] = useState(false);
@@ -65,6 +67,7 @@ const CreateCoupons = () => {
                     setCombineWithOtherCoupons(data.combineWithOtherCoupons);
                     setCustomerSegment(data.customerSegment);
                     setIsActive(data.isActive);
+                    setShowOnFronted(data.showOnFronted);
                     //     // ✅ Proper mapping from products
                     if (data.products?.length) {
                         const mapped = data.products.map((product: any) => ({
@@ -90,34 +93,6 @@ const CreateCoupons = () => {
 }, [products]);
 
 
-    // useEffect(() => {
-    //     if (id) {
-    //         dispatch(getByIdCouponsThunk(id))
-    //             .unwrap()
-    //             .then((data) => {
-    //                 setCouponCode(data.couponCode);
-    //                 setDescription(data.description);
-    //                 setDiscountType(data.discountType === 'percentage' ? '%' : '₹');
-    //                 setDiscountValue(data.discountValue.toString());
-    //                 setMinOrderValue(data.minOrderValue);
-    //                 setUsageLimit(data.usageLimit);
-    //                 setStartDate(data.startDate?.split('T')[0]);
-    //                 setEndDate(data.endDate?.split('T')[0]);
-    //                 setCombineWithOtherCoupons(data.combineWithOtherCoupons);
-    //                 setCustomerSegment(data.customerSegment);
-    //                 setIsActive(data.isActive);
-    //                 if (data.productIds?.length) {
-    //                     const mapped = data.productIds.map((id: any) => ({
-    //                         value: id.toString(),
-    //                         label: products.find((p: any) => p.id === id)?.title || `Product ${id}`,
-    //                     }));
-    //                     setSelectedProducts(mapped);
-    //                 }
-    //             })
-    //             .catch(() => toast.error('Failed to load coupon for editing'));
-    //     }
-    // }, [id, dispatch, products]);
-
     const handleSave = () => {
         setHasSubmitted(true); // ✅ Only show toast after this
         const productIds = selectedProducts.map((p) => Number(p.value));
@@ -133,6 +108,7 @@ const CreateCoupons = () => {
             startDate,
             endDate,
             isActive,
+            showOnFronted,
             productIds,
         };
 
@@ -155,7 +131,13 @@ const CreateCoupons = () => {
     return (
         <div className="flex flex-col gap-2.5">
             <div className="panel px-0 flex-1 py-6">
-                <div className="text-lg ps-5 leading-none">{id ? "Edit Coupon" : "Add New Coupon"}</div>
+                <div className='flex justify-between items-center ltr:xl:mr-6'>
+                    <div className="text-lg ps-5 leading-none">{id ? "Edit Coupon" : "Add New Coupon"}</div>
+                 <button type="button" className="btn btn-dark gap-2" onClick={() => navigate(-1)}>
+                                                                          <IconArrowBackward />
+                                                                          Back To Coupon
+                                                                      </button>
+                </div>
                 <hr className="border-white-light dark:border-[#1b2e4b] my-6" />
 
                 <div className="px-4">
@@ -229,6 +211,9 @@ const CreateCoupons = () => {
                             <div>
                                 <label className="block font-semibold">Status *</label>
                                 <input type="checkbox" checked={isActive} onChange={(e) => setIsActive(e.target.checked)} className="form-checkbox" /> Active
+                            </div>
+                             <div>
+                                <input type="checkbox" checked={showOnFronted} onChange={(e) => setShowOnFronted(e.target.checked)} className="form-checkbox" /> Show on Frontend
                             </div>
                         </div>
                     </div>

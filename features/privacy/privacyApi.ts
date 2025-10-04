@@ -10,7 +10,13 @@ export const privacyApi = baseApi.injectEndpoints({
         body,
       }),
     }),
+    getPrivacyPolicy: builder.query({
+      query: () => ({
+        url: '/privacy-policy',
+        method: 'GET',
+      }),
+      }),
   }),
 });
 
-export const { useCreatePrivacyPolicyMutation } = privacyApi;
+export const { useCreatePrivacyPolicyMutation, useGetPrivacyPolicyQuery } = privacyApi;

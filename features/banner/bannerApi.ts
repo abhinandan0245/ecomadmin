@@ -12,7 +12,7 @@ export const bannerApi = baseApi.injectEndpoints({
     }),
 
     getAllBanners: builder.query<any[], void>({
-      query: () => '/banners',
+      query: () => '/banners-admin',
         providesTags: ['Banner'], // ✅ necessary for auto-refetching after update
     }),
 

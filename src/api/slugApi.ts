@@ -1,17 +1,18 @@
 import axios from "axios";
 
+// const BASE_URL = 'https://backend.triliv.in/api';
 const BASE_URL = 'http://localhost:5000/api';
 
-export const addSlugApi = async (name: string, token: string) => {
+export const addSlugApi = async (slug: string, token: string) => {
   try {
     const response = await axios.post(
       `${BASE_URL}/slug`,
-      { name },
+      { slug },
       {
         headers: {
           Authorization: `Bearer ${token}`,
         },
-        withCredentials: true,
+        // withCredentials: true,
       }
     );
     return response.data;
@@ -29,7 +30,7 @@ export const suggestionSlugApi = async (query: string, token: string) => {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-      withCredentials: true,  
+      // withCredentials: true,  
     });
     console.log("data from response:",response.data);
     return response.data;

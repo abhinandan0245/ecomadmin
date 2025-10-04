@@ -1,5 +1,4 @@
 import { useState, useEffect, Fragment } from 'react';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import Swal from 'sweetalert2';
 import { Dialog, Transition } from '@headlessui/react';
 import ReactQuill from 'react-quill';
@@ -23,6 +22,7 @@ import IconHorizontalDots from '../../components/Icon/IconHorizontalDots';
 import IconPencilPaper from '../../components/Icon/IconPencilPaper';
 import IconX from '../../components/Icon/IconX';
 import IconRestore from '../../components/Icon/IconRestore';
+import Scrollbars from 'react-custom-scrollbars-2';
 
 const Todolist = () => {
     const dispatch = useDispatch();
@@ -616,7 +616,7 @@ const Todolist = () => {
                             </div>
                         </div>
                         <div className="h-px w-full border-b border-white-light dark:border-[#1b2e4b] mb-5"></div>
-                        <PerfectScrollbar className="relative ltr:pr-3.5 rtl:pl-3.5 ltr:-mr-3.5 rtl:-ml-3.5 h-full grow">
+                        <Scrollbars className="relative ltr:pr-3.5 rtl:pl-3.5 ltr:-mr-3.5 rtl:-ml-3.5 h-full grow">
                             <div className="space-y-1">
                                 <button
                                     type="button"
@@ -756,7 +756,7 @@ const Todolist = () => {
                                     <div className="ltr:ml-3 rtl:mr-3">Update</div>
                                 </button>
                             </div>
-                        </PerfectScrollbar>
+                        </Scrollbars>
                         <div className="ltr:left-0 rtl:right-0 absolute bottom-0 p-4 w-full">
                             <button className="btn btn-primary w-full" type="button" onClick={() => addEditTask()}>
                                 <IconPlus className="ltr:mr-2 rtl:ml-2 shrink-0" />

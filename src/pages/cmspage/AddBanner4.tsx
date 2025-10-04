@@ -128,7 +128,13 @@ const AddBanner4 = () => {
     return (
         <div className="flex  flex-col gap-2.5">
             <div className="panel px-0 flex-1 py-6 ltr:xl:mr-6 rtl:xl:ml-6">
-                <div className="text-lg ps-5 leading-none">{isUpdateMode ? 'Update Banner' : 'Add Banner'}</div>
+                <div className='flex justify-between items-center ltr:xl:mr-6'>
+                    <div className="text-lg ps-5 leading-none">{isUpdateMode ? 'Update Banner' : 'Add Banner'}</div>
+                  <button type="button" className="btn btn-dark gap-2" onClick={() => navigate(-1)}>
+                                                                                                          <IconArrowBackward />
+                                                                                                          Back
+                                                                                                      </button>
+                </div>
 
                 <hr className="border-white-light dark:border-[#1b2e4b] my-6" />
                 <div className="mt-8 px-4">
